@@ -18,19 +18,19 @@ This guide explains how to deploy the Epsilon Django application using Docker.
 
 2. Build and start the application:
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 3. Access the application at `http://localhost:8000`
 
 4. To view logs:
    ```bash
-   docker-compose logs -f
+   docker compose logs -f
    ```
 
 5. To stop the application:
    ```bash
-   docker-compose down
+   docker compose down
    ```
 
 ### Option 2: Using Docker directly
@@ -149,8 +149,8 @@ docker exec epsilon-web python manage.py collectstatic --noinput
 To view detailed logs:
 ```bash
 docker logs epsilon-web
-# or with docker-compose
-docker-compose logs web
+# or with docker compose
+docker compose logs web
 ```
 
 ## Development with Docker

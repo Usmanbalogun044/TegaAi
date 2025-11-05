@@ -7,7 +7,8 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=epsilon.settings
       - DEBUG=False
-      - ALLOWED_HOSTS=*
+      # Change ALLOWED_HOSTS to your domain in production (e.g., ALLOWED_HOSTS=example.com,www.example.com)
+      - ALLOWED_HOSTS=localhost,127.0.0.1
     volumes:
       - ./db.sqlite3:/app/db.sqlite3
       - ./staticfiles:/app/staticfiles

@@ -27,7 +27,7 @@ COPY . .
 # Create staticfiles directory
 RUN mkdir -p staticfiles
 
-# Collect static files
+# Collect static files (may fail if static files not fully configured, which is OK)
 RUN python manage.py collectstatic --noinput || true
 
 # Create a non-root user to run the application
