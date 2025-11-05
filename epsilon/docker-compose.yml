@@ -1,0 +1,21 @@
+services:
+  web:
+    build: .
+    container_name: epsilon-web
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=epsilon.settings
+      - DEBUG=False
+      # Change ALLOWED_HOSTS to your domain in production (e.g., ALLOWED_HOSTS=example.com,www.example.com)
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+      - ./staticfiles:/app/staticfiles
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
