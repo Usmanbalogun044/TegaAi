@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Documentation
+*.md
+ADVENTURE_IMPLEMENTATION.md
+AUTHENTICATION_COMPLETE.md
+FILE_UPLOAD_IMPLEMENTATION.md
+STATIC_FILES_SETUP.md
+URL_CONFIGURATION.md
+VIEWS_DOCUMENTATION.md
+WEBSOCKET_SETUP.md
+
+# Test files
+test_*.py
+
+# Batch files
+*.bat
