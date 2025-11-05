@@ -1,0 +1,425 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Tega</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="app-logo">
+          <span class="logo-icon"><img src="{% static 'icons/Logo.svg' %}"></span>
+          <span class="logo-text">Tega</span>
+        </div>
+        <button class="collapse-btn" aria-label="Collapse sidebar">‹</button>
+      </div>
+
+      <div class="user-profile">
+        <div class="avatar">{{ user.first_name|first|upper|default:"👤" }}</div>
+        <div class="user-info">
+          <div class="user-name">{{ user.first_name|default:user.username }}</div>
+          <div class="user-type">Child Learner</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="{% url 'dashboard' %}" class="nav-item">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Home</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">✨</span>
+          <span class="nav-label">Learn</span>
+        </a>
+        <a href="{% url 'chat' %}" class="nav-item">
+          <span class="nav-icon">💬</span>
+          <span class="nav-label">Chat with Tega</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-label">Badges</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">⭐</span>
+          <span class="nav-label">Progress</span>
+        </a>
+      </nav>
+
+      <div class="streak-widget">
+        <div class="streak-label">CURRENT STREAK</div>
+        <div class="streak-value">
+          <span class="streak-icon">🔥</span>
+          <span class="streak-number">{{ streak_days|default:0 }}</span>
+          <span class="streak-unit">days</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <a href="{% url 'settings' %}" class="footer-link active">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+        <a href="{% url 'logout' %}" class="footer-link">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Log Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">☰</button>
+        <div>
+          <h1 class="greeting-title">Settings</h1>
+          <p class="greeting-subtitle">Manage your account and preferences</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" aria-label="Notifications">🔔</button>
+        </div>
+      </header>
+
+      <div class="dashboard-content settings-content">
+        <!-- Profile Section -->
+        <section class="settings-section">
+          <div class="settings-section-header">
+            <span class="settings-icon">👤</span>
+            <h2 class="settings-section-title">Profile</h2>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">Name</div>
+                <div class="settings-item-value">{{ user.first_name|default:user.username }}</div>
+              </div>
+              <button class="settings-item-action" onclick="editProfile('name')">Edit</button>
+            </div>
+
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">Email</div>
+                <div class="settings-item-value">{{ user.email|default:"Not set" }}</div>
+              </div>
+              <button class="settings-item-action" onclick="editProfile('email')">Edit</button>
+            </div>
+
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">Age</div>
+                <div class="settings-item-value">{{ age|default:"Not set" }}</div>
+              </div>
+              <button class="settings-item-action" onclick="editProfile('age')">Edit</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Accessibility Section -->
+        <section class="settings-section">
+          <div class="settings-section-header">
+            <span class="settings-icon">♿</span>
+            <h2 class="settings-section-title">Accessibility</h2>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">Voice Guidance</div>
+                <div class="settings-item-desc">Have lessons read out loud</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="voice-guidance" {% if voice_guidance %}checked{% endif %}>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">Break Reminders</div>
+                <div class="settings-item-desc">Get reminders to take breaks</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="break-reminders" {% if break_reminders %}checked{% endif %}>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">Reduce Motion</div>
+                <div class="settings-item-desc">Minimize animations and movement</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="reduce-motion" {% if reduce_motion %}checked{% endif %}>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Notifications Section -->
+        <section class="settings-section">
+          <div class="settings-section-header">
+            <span class="settings-icon">🔔</span>
+            <h2 class="settings-section-title">Notifications</h2>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">Daily Reminders</div>
+                <div class="settings-item-desc">Get reminders to practice daily</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="daily-reminders" {% if daily_reminders %}checked{% endif %}>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">Achievement Alerts</div>
+                <div class="settings-item-desc">Get notified when you earn badges</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="achievement-alerts" {% if achievement_alerts %}checked{% endif %}>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Appearance Section -->
+        <section class="settings-section">
+          <div class="settings-section-header">
+            <span class="settings-icon">🎨</span>
+            <h2 class="settings-section-title">Appearance</h2>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">Color Theme</div>
+                <div class="settings-item-desc">Choose your color theme</div>
+              </div>
+              <select class="settings-select" id="color-theme">
+                <option value="default">Default</option>
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+                <option value="purple">Purple</option>
+              </select>
+            </div>
+
+            <div class="settings-item">
+              <div class="settings-item-content">
+                <div class="settings-item-label">High Contrast</div>
+                <div class="settings-item-desc">Use higher contrast colors</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="high-contrast" {% if high_contrast %}checked{% endif %}>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Your Progress Section -->
+        <section class="settings-section">
+          <div class="settings-section-header">
+            <h3 class="settings-section-title">Your Progress</h3>
+          </div>
+
+          <div class="progress-stats-grid">
+            <div class="progress-stat-card">
+              <div class="progress-stat-value">{{ lessons_completed|default:0 }}</div>
+              <div class="progress-stat-label">Lessons Completed</div>
+            </div>
+
+            <div class="progress-stat-card">
+              <div class="progress-stat-value">{{ streak_days|default:0 }}</div>
+              <div class="progress-stat-label">Day Streak</div>
+            </div>
+
+            <div class="progress-stat-card">
+              <div class="progress-stat-value">{{ badges_earned|default:0 }}</div>
+              <div class="progress-stat-label">Badges Earned</div>
+            </div>
+
+            <div class="progress-stat-card">
+              <div class="progress-stat-value">{{ total_points|default:12 }}</div>
+              <div class="progress-stat-label">Total Points</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Account Actions Section -->
+        <section class="settings-section">
+          <div class="settings-section-header">
+            <h3 class="settings-section-title">Account</h3>
+          </div>
+
+          <div class="settings-card">
+            <button class="settings-action-btn" onclick="handleLogout()">
+              <span class="action-icon">🚪</span>
+              <span>Log Out</span>
+            </button>
+
+            <button class="settings-action-btn danger" onclick="confirmResetData()">
+              <span class="action-icon">🔄</span>
+              <span>Reset All Data</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Tega Connection -->
+        <div class="tega-connection-footer">
+          <div class="tega-connection-avatar">🦕</div>
+          <div class="tega-connection-text">
+            <strong>Tega Learning Companion</strong>
+            <p>Settings are saved automatically. You can change them anytime!</p>
+          </div>
+        </div>
+
+        <div class="settings-footer-links">
+          <a href="#">Privacy</a>
+          <span>·</span>
+          <a href="#">Terms</a>
+          <span>·</span>
+          <a href="#">Help</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="{% static 'app.js' %}?v=14"></script>
+  <script>
+    // Settings page specific JavaScript
+    
+    // Auto-save settings when toggles change
+    document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+      toggle.addEventListener('change', function() {
+        saveSettings();
+      });
+    });
+
+    // Auto-save when select changes
+    document.querySelectorAll('.settings-select').forEach(select => {
+      select.addEventListener('change', function() {
+        saveSettings();
+      });
+    });
+
+    function saveSettings() {
+      const settings = {
+        voice_guidance: document.getElementById('voice-guidance')?.checked || false,
+        break_reminders: document.getElementById('break-reminders')?.checked || false,
+        reduce_motion: document.getElementById('reduce-motion')?.checked || false,
+        daily_reminders: document.getElementById('daily-reminders')?.checked || false,
+        achievement_alerts: document.getElementById('achievement-alerts')?.checked || false,
+        high_contrast: document.getElementById('high-contrast')?.checked || false,
+        color_theme: document.getElementById('color-theme')?.value || 'default'
+      };
+
+      // Save to localStorage for immediate UI updates
+      localStorage.setItem('tegaSettings', JSON.stringify(settings));
+
+      // Send to server
+      fetch('{% url "save_settings" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(settings)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Settings saved!');
+        }
+      })
+      .catch(error => {
+        console.error('Error saving settings:', error);
+      });
+    }
+
+    function editProfile(field) {
+      // Simple prompt-based editing (can be enhanced with modals)
+      const currentValue = document.querySelector(`[data-field="${field}"] .settings-item-value`)?.textContent || '';
+      const newValue = prompt(`Edit ${field}:`, currentValue);
+      
+      if (newValue && newValue !== currentValue) {
+        fetch('{% url "update_profile" %}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({
+            field: field,
+            value: newValue
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          }
+        });
+      }
+    }
+
+    function handleLogout() {
+      if (confirm('Are you sure you want to log out?')) {
+        window.location.href = '{% url "logout" %}';
+      }
+    }
+
+    function confirmResetData() {
+      if (confirm('⚠️ Are you sure you want to reset all your data? This cannot be undone!')) {
+        if (confirm('This will delete all your progress, badges, and points. Are you ABSOLUTELY sure?')) {
+          fetch('{% url "reset_data" %}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': '{{ csrf_token }}'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert('All data has been reset.');
+              window.location.href = '{% url "dashboard" %}';
+            }
+          });
+        }
+      }
+    }
+
+    function showToast(message) {
+      // Simple toast notification
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 100);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

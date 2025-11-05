@@ -1,0 +1,12 @@
+# Django Channels and WebSocket support
+channels>=4.0.0
+daphne>=4.0.0
+
+# PDF processing
+PyPDF2>=3.0.0
+
+# Async HTTP client for forwarding to external AI
+aiohttp>=3.9.0
+
+# Existing Django requirements
+Django>=4.2

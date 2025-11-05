@@ -1,0 +1,289 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – Tega</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body class="dashboard-body adult-theme">
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar adult-sidebar">
+      <div class="sidebar-header">
+        <div class="app-logo">
+          <span class="logo-icon"><img src="{% static 'icons/Logo.svg' %}"></span>
+          <span class="logo-text">Tega</span>
+        </div>
+        <button class="collapse-btn" aria-label="Collapse sidebar">‹</button>
+      </div>
+
+      <div class="user-profile">
+        <div class="avatar avatar-adult">{{ user.first_name|first|upper|default:"U" }}</div>
+        <div class="user-info">
+          <div class="user-name">{{ user.first_name|default:user.username }}</div>
+          <div class="user-type">Adult Learner</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="{% url 'dashboard_adult' %}" class="nav-item active">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">🎯</span>
+          <span class="nav-label">Learning Paths</span>
+        </a>
+        <a href="{% url 'chat' %}" class="nav-item">
+          <span class="nav-icon">�</span>
+          <span class="nav-label">Chat with Tega</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">My Progress</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-label">Achievements</span>
+        </a>
+      </nav>
+
+      <div class="streak-widget adult-streak">
+        <div class="streak-label">This Week</div>
+        <div class="streak-value">
+          <span class="streak-number">0</span>
+          <span class="streak-unit">day streak</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <a href="{% url 'settings' %}" class="footer-link">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+        <a href="{% url 'logout' %}" class="footer-link">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Log Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main adult-main">
+      <header class="dashboard-header">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">☰</button>
+        <div class="greeting">
+          <h1 class="greeting-title">Welcome back, {{ user.first_name|default:user.username }}</h1>
+          <p class="greeting-subtitle">Let's make today productive</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" aria-label="Settings">⚙️</button>
+          <button class="icon-btn" aria-label="Notifications">🔔</button>
+        </div>
+      </header>
+
+      <div class="dashboard-content adult-content">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card stat-peach">
+            <div class="stat-icon">📚</div>
+            <div class="stat-info">
+              <div class="stat-value">{{ streak_days }}</div>
+              <div class="stat-label">days</div>
+            </div>
+            <div class="stat-tag">🔥 Streak</div>
+          </div>
+          <div class="stat-card stat-green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <div class="stat-value">0</div>
+              <div class="stat-label">lessons</div>
+            </div>
+            <div class="stat-tag">🎯 Completed</div>
+          </div>
+          <div class="stat-card stat-yellow">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-info">
+              <div class="stat-value">2.5</div>
+              <div class="stat-label">hours</div>
+            </div>
+            <div class="stat-tag">⏰ Focus Time</div>
+          </div>
+          <div class="stat-card stat-purple">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-info">
+              <div class="stat-value">0</div>
+              <div class="stat-label">earned</div>
+            </div>
+            <div class="stat-tag">💎 Points</div>
+          </div>
+        </div>
+
+        <!-- Continue Learning -->
+        <section class="learning-section">
+          <h2 class="section-title">Continue Learning</h2>
+          <div class="learning-grid">
+            <div class="learning-card">
+              <div class="learning-icon bg-peach">💼</div>
+              <div class="learning-content">
+                <h3 class="learning-title">Productivity</h3>
+                <p class="learning-desc">Smarter time management and focus</p>
+                <div class="learning-progress">
+                  <div class="progress-bar-small">
+                    <div class="progress-fill" style="width:10%"></div>
+                  </div>
+                  <span class="progress-text">10%</span>
+                </div>
+              </div>
+            </div>
+            <div class="learning-card">
+              <div class="learning-icon bg-green">🧘</div>
+              <div class="learning-content">
+                <h3 class="learning-title">Mental Wellness</h3>
+                <p class="learning-desc">Mindfulness and self-care</p>
+                <div class="learning-progress">
+                  <div class="progress-bar-small">
+                    <div class="progress-fill" style="width:20%"></div>
+                  </div>
+                  <span class="progress-text">20%</span>
+                </div>
+              </div>
+            </div>
+            <div class="learning-card">
+              <div class="learning-icon bg-yellow">👥</div>
+              <div class="learning-content">
+                <h3 class="learning-title">People management</h3>
+                <p class="learning-desc">Management and soft-skills</p>
+                <div class="learning-progress">
+                  <div class="progress-bar-small">
+                    <div class="progress-fill" style="width:15%"></div>
+                  </div>
+                  <span class="progress-text">15%</span>
+                </div>
+              </div>
+            </div>
+            <div class="learning-card">
+              <div class="learning-icon bg-pink">🎨</div>
+              <div class="learning-content">
+                <h3 class="learning-title">Creative Thinking</h3>
+                <p class="learning-desc">Unlock your creativity</p>
+                <div class="learning-progress">
+                  <div class="progress-bar-small">
+                    <div class="progress-fill" style="width:5%"></div>
+                  </div>
+                  <span class="progress-text">5%</span>
+                </div>
+              </div>
+            </div>
+            <div class="learning-card">
+              <div class="learning-icon bg-purple">✍️</div>
+              <div class="learning-content">
+                <h3 class="learning-title">Professional Writing</h3>
+                <p class="learning-desc">Unlock your creativity</p>
+                <div class="learning-progress">
+                  <div class="progress-bar-small">
+                    <div class="progress-fill" style="width:8%"></div>
+                  </div>
+                  <span class="progress-text">8%</span>
+                </div>
+              </div>
+            </div>
+            <div class="learning-card">
+              <div class="learning-icon bg-blue">📖</div>
+              <div class="learning-content">
+                <h3 class="learning-title">Go to lesson</h3>
+                <p class="learning-desc">View all Lessons →</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recommended for You -->
+        <section class="recommended-section">
+          <h2 class="section-title">Recommended for You</h2>
+          <div class="recommended-list">
+            <div class="recommended-item">
+              <div class="rec-icon bg-peach">💡</div>
+              <div class="rec-content">
+                <h4 class="rec-title">Focus Fundamentals</h4>
+                <p class="rec-meta">15 min • Productivity</p>
+              </div>
+              <button class="btn-start">Start</button>
+            </div>
+            <div class="recommended-item">
+              <div class="rec-icon bg-green">🧠</div>
+              <div class="rec-content">
+                <h4 class="rec-title">Mindful Moments</h4>
+                <p class="rec-meta">10 min • Wellness</p>
+              </div>
+              <button class="btn-start">Start</button>
+            </div>
+            <div class="recommended-item">
+              <div class="rec-icon bg-yellow">☕</div>
+              <div class="rec-content">
+                <h4 class="rec-title">Time for a break?</h4>
+                <p class="rec-meta">You've been working for 45 minutes. A short break can help maintain productivity.</p>
+              </div>
+              <button class="btn-start">Start</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Sidebar -->
+      <aside class="right-sidebar adult-right-sidebar">
+        <div class="talk-to-tega-widget">
+        <a href="{% url 'chat' %}" style="text-decoration: none; color: inherit;">
+          <div class="tega-chat-icon">💬</div>
+          <h3 class="tega-chat-title">Talk to Tega</h3>
+          <p class="tega-chat-desc">Ask me anything or just chat!</p>
+          →
+        </a>
+        </div>
+
+        <div class="goals-widget">
+          <h3 class="widget-title">Today's Goal</h3>
+          <div class="goal-progress-circle">
+            <svg class="progress-ring" width="120" height="120">
+              <circle class="progress-ring-bg" cx="60" cy="60" r="54" fill="none" stroke="#f0f1f7" stroke-width="8"/>
+              <circle class="progress-ring-fill" cx="60" cy="60" r="54" fill="none" stroke="#ff6b35" stroke-width="8" 
+                      stroke-dasharray="339.292" stroke-dashoffset="135.717" transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="progress-percentage">60%</div>
+          </div>
+          <p class="goal-status">12 of 20 minutes completed</p>
+          
+          <div class="goal-checklist">
+            <label class="goal-item">
+              <input type="checkbox" checked>
+              <span class="goal-text">Complete a lesson</span>
+              <span class="goal-check">✓</span>
+            </label>
+            <label class="goal-item">
+              <input type="checkbox">
+              <span class="goal-text">20 min focus time</span>
+            </label>
+            <label class="goal-item">
+              <input type="checkbox">
+              <span class="goal-text">Review notes</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="insight-widget">
+          <div class="insight-icon">💡</div>
+          <h4 class="insight-title">Insight</h4>
+          <p class="insight-text">You're at the peak of the evening. Try scheduling challenging lessons before the best results.</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="{% static 'app.js' %}?v=14"></script>
+</body>
+</html>

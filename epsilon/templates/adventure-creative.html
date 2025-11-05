@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creative Studio | Tega Learning</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v=15">
+  <link rel="stylesheet" href="{% static 'adventure.css' %}?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="adventure-body">
+  <nav class="nav">
+    <div class="nav-left">
+      <span class="logo">tega.</span>
+    </div>
+    <ul class="nav-center">
+      <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+      <li><a href="{% url 'chat' %}" class="nav-link">Chat</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      <span class="welcome-text">{{ user.username }}</span>
+    </div>
+  </nav>
+
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <div class="mobile-menu-content">
+      <button class="mobile-menu-close" id="mobileMenuClose">×</button>
+      <div class="mobile-menu-header">
+        <span class="logo">tega.</span>
+        <p class="mobile-welcome">{{ user.username }}</p>
+      </div>
+      <ul class="mobile-menu-links">
+        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'chat' %}">Chat</a></li>
+        <li><a href="{% url 'settings' %}">Settings</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="adventure-container">
+    <div class="adventure-header">
+      <div class="breadcrumb">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>Creative Studio</span>
+      </div>
+      <div class="adventure-progress-bar">
+        <div class="adventure-progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="adventure-stats">
+        <div class="stat-item">
+          <span class="stat-icon">🎯</span>
+          <span class="stat-label">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-content">
+      <div class="lesson-hero accent-pink">
+        <div class="lesson-hero-icon">🎨</div>
+        <h1 class="lesson-title">Creative Studio - Coming Soon!</h1>
+        <p class="lesson-subtitle">Express yourself through art and creativity</p>
+      </div>
+
+      <section class="lesson-section">
+        <h2 class="lesson-heading">What's Coming</h2>
+        <p class="lesson-text">
+          Get ready for creative adventures! We're preparing:
+        </p>
+        <ul style="font-size: 16px; line-height: 1.7; margin: 20px 0; padding-left: 24px;">
+          <li>Digital drawing and coloring activities</li>
+          <li>Music creation with simple instruments</li>
+          <li>Storytelling and creative writing prompts</li>
+          <li>Craft ideas you can try at home</li>
+          <li>Gallery to showcase your creations</li>
+        </ul>
+        
+        <div class="completion-actions" style="margin-top: 32px;">
+          <a href="{% url 'dashboard' %}" class="btn btn-primary">← Back to Dashboard</a>
+          <a href="{% url 'adventure_math' %}" class="btn btn-secondary">Try Math Adventures</a>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Tega Learning Platform. Empowering young minds across Nigeria.</p>
+    <div class="footer-links">
+      <a href="{% url 'settings' %}">Settings</a>
+    </div>
+  </footer>
+
+  <script src="{% static 'app.js' %}?v=15"></script>
+</body>
+</html>

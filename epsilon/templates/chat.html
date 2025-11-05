@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat with Tega</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v=16">
+</head>
+<body class="dashboard-body chat-body">
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="app-logo">
+          <span class="logo-icon"><img src="{% static 'icons/Logo.svg' %}"></span>
+          <span class="logo-text">Tega</span>
+        </div>
+        <button class="collapse-btn" aria-label="Collapse sidebar">‹</button>
+      </div>
+
+      <div class="user-profile">
+        <div class="avatar">{{ user.first_name|first|upper|default:"�" }}</div>
+        <div class="user-info">
+          <div class="user-name">{{ user.first_name|default:user.username }}</div>
+          <div class="user-type">Child Learner</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="{% url 'dashboard' %}" class="nav-item">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Home</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">✨</span>
+          <span class="nav-label">Learn</span>
+        </a>
+        <a href="{% url 'chat' %}" class="nav-item active">
+          <span class="nav-icon">💬</span>
+          <span class="nav-label">Chat with Tega</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-label">Badges</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">⭐</span>
+          <span class="nav-label">Progress</span>
+        </a>
+      </nav>
+
+      <div class="streak-widget">
+        <div class="streak-label">Your Streak</div>
+        <div class="streak-value">
+          <span class="streak-icon">🔥</span>
+          <span class="streak-number">{{ streak_days|default:0 }}</span>
+          <span class="streak-unit">days!</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <a href="{% url 'settings' %}" class="footer-link">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+        <a href="{% url 'logout' %}" class="footer-link">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Log Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Chat Main Content -->
+    <main class="chat-main">
+      <header class="chat-header">
+        <button class="back-btn" onclick="history.back()" aria-label="Go back">←</button>
+        <div class="chat-header-info">
+          <div class="chat-avatar-header"><img src="{% static 'icons/Logo.svg' %}"></div>
+          <div class="chat-title-info">
+            <h1 class="chat-title">Chat with Tega</h1>
+            <p class="chat-status">● Online</p>
+          </div>
+        </div>
+        <a href="{% url 'dashboard' %}" class="back-to-home-btn">
+            <span class="home-icon">🏠</span>
+            Back to Home
+          </a>
+        <button class="icon-btn" id="mute-btn" aria-label="Toggle sound">�</button>
+      </header>
+
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <!-- Tega's messages -->
+          
+
+          <!-- User's message placeholder (will be added via JS) -->
+          <div class="message user-message" style="display:none;">
+            <div class="message-bubble">
+              <!-- User message will go here -->
+            </div>
+            <div class="message-avatar user-avatar">👤</div>
+          </div>
+        </div>
+
+        <!-- Quick Ideas -->
+        <div class="quick-ideas">
+          <div class="quick-ideas-label">Quick ideas:</div>
+          <div class="quick-ideas-buttons">
+            <button class="quick-idea-btn">Tell me a story</button>
+            <button class="quick-idea-btn">How do you spell water?</button>
+            <button class="quick-idea-btn">Let's count</button>
+            <button class="quick-idea-btn">Fun fact please!</button>
+          </div>
+        </div>
+
+        <!-- File Preview -->
+        <div class="file-preview" id="file-preview" style="display: none;">
+          <div class="file-preview-content">
+            <span class="file-icon">📄</span>
+            <span class="file-name" id="file-name"></span>
+            <button class="file-remove-btn" id="file-remove-btn" aria-label="Remove file">×</button>
+          </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="message-input-container">
+          <input 
+            type="file" 
+            id="file-input" 
+            accept=".pdf,.txt"
+            style="display: none;"
+          >
+          <button class="file-upload-btn" id="file-upload-btn" aria-label="Upload file" title="Upload PDF or TXT file">📎</button>
+          <button class="voice-input-btn" aria-label="Voice input">🎤</button>
+          <input 
+            type="text" 
+            class="message-input" 
+            placeholder="Type your message..."
+            id="message-input"
+          >
+          <button class="send-btn" id="send-btn" aria-label="Send message">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M2 10L18 2L10 18L8 11L2 10Z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Back to Home Button -->
+        <div class="chat-footer">
+          
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    window.uniqueId = "{{ unique_id }}";
+  </script>
+  <script src="{% static 'app.js' %}?v=20"></script>
+</body>
+</html>

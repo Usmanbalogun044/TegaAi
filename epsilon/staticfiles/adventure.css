@@ -1,0 +1,359 @@
+/* Adventure/Lesson Pages */
+.adventure-body{
+  background:linear-gradient(135deg,#ffd4b3 0%,#ffc9a8 50%,#d4c5ff 100%);
+  min-height:100vh;
+}
+.adventure-container{
+  max-width:900px;
+  margin:80px auto 40px;
+  padding:0 20px;
+}
+.adventure-header{
+  background:#fff;
+  border-radius:var(--radius-lg);
+  padding:24px;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+  margin-bottom:24px;
+}
+.breadcrumb{
+  font-size:14px;
+  margin-bottom:16px;
+  color:var(--muted);
+}
+.breadcrumb a{
+  color:var(--accent);
+  text-decoration:none;
+}
+.breadcrumb a:hover{
+  text-decoration:underline;
+}
+.breadcrumb-sep{
+  margin:0 8px;
+  color:#d0d2e0;
+}
+.adventure-progress-bar{
+  height:8px;
+  background:#e8eaf0;
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:16px;
+}
+.adventure-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,#8b7dd8,#b8d4ff);
+  border-radius:20px;
+  transition:width 0.6s ease;
+}
+.adventure-stats{
+  display:flex;
+  gap:24px;
+}
+.stat-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+}
+.stat-icon{
+  font-size:18px;
+}
+.lesson-content{
+  background:#fff;
+  border-radius:var(--radius-lg);
+  padding:40px;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+}
+.lesson-hero{
+  text-align:center;
+  padding:40px 20px;
+  border-radius:var(--radius-lg);
+  margin-bottom:32px;
+}
+.lesson-hero.accent-yellow{background:#fffaeb;}
+.lesson-hero.accent-peach{background:#fff5f0;}
+.lesson-hero.accent-blue{background:#eff6ff;}
+.lesson-hero.accent-pink{background:#fef2f8;}
+.lesson-hero-icon{
+  font-size:80px;
+  margin-bottom:16px;
+}
+.lesson-title{
+  font-size:32px;
+  font-weight:700;
+  margin:0 0 12px;
+}
+.lesson-subtitle{
+  font-size:18px;
+  color:var(--muted);
+  margin:0;
+}
+.lesson-section{
+  margin-bottom:40px;
+}
+.section-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:linear-gradient(135deg,#8b7dd8,#b8d4ff);
+  color:#fff;
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:16px;
+}
+.lesson-heading{
+  font-size:24px;
+  font-weight:700;
+  margin:0 0 16px;
+}
+.lesson-text{
+  font-size:16px;
+  line-height:1.7;
+  color:var(--text);
+  margin:0 0 20px;
+}
+.fun-fact{
+  background:#f0f7ff;
+  border-left:4px solid #3b82f6;
+  padding:16px 20px;
+  border-radius:var(--radius-md);
+  display:flex;
+  gap:12px;
+  align-items:start;
+  margin:20px 0;
+}
+.fun-fact-icon{
+  font-size:24px;
+}
+.fun-fact-content{
+  font-size:14px;
+  line-height:1.6;
+}
+.counting-game{
+  background:#fafbfd;
+  border-radius:var(--radius-lg);
+  padding:32px;
+  text-align:center;
+  margin:24px 0;
+}
+.counting-items{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+}
+.count-item{
+  font-size:48px;
+  cursor:pointer;
+  transition:transform 0.2s ease;
+  opacity:0.3;
+}
+.count-item:hover{
+  transform:scale(1.2);
+}
+.count-item.counted{
+  opacity:1;
+  animation:pop 0.3s ease;
+}
+@keyframes pop{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.3);}
+  100%{transform:scale(1);}
+}
+.counting-display{
+  display:flex;
+  justify-content:center;
+  align-items:baseline;
+  gap:8px;
+  margin-bottom:16px;
+}
+.count-label{
+  font-size:16px;
+  color:var(--muted);
+}
+.count-number{
+  font-size:48px;
+  font-weight:700;
+  color:var(--accent);
+}
+.reset-btn{
+  background:#e8eaf0;
+  border:none;
+  padding:10px 24px;
+  border-radius:var(--radius-md);
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background 0.15s ease;
+}
+.reset-btn:hover{
+  background:#d0d2e0;
+}
+.quiz-container{
+  background:#fafbfd;
+  border-radius:var(--radius-lg);
+  padding:32px;
+  margin:24px 0;
+}
+.quiz-question{
+  display:none;
+}
+.quiz-question.active{
+  display:block;
+}
+.question-text{
+  font-size:18px;
+  font-weight:600;
+  margin:0 0 24px;
+  text-align:center;
+}
+.answer-options{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+  margin-bottom:20px;
+}
+.answer-btn{
+  background:#fff;
+  border:2px solid #e8eaf0;
+  padding:16px;
+  border-radius:var(--radius-md);
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.15s ease;
+  font-family:'Poppins',sans-serif;
+}
+.answer-btn:hover:not(:disabled){
+  border-color:var(--accent);
+  transform:translateY(-2px);
+}
+.answer-btn.correct{
+  background:#10b981;
+  color:#fff;
+  border-color:#10b981;
+}
+.answer-btn.incorrect{
+  background:#ef4444;
+  color:#fff;
+  border-color:#ef4444;
+}
+.answer-btn:disabled{
+  cursor:not-allowed;
+  opacity:0.7;
+}
+.quiz-feedback{
+  text-align:center;
+  margin-top:16px;
+  font-weight:600;
+}
+.feedback-correct{
+  color:#10b981;
+  font-size:16px;
+}
+.feedback-incorrect{
+  color:#ef4444;
+  font-size:16px;
+}
+.completion-card{
+  background:linear-gradient(135deg,#fffaeb,#fff5f0);
+  border-radius:var(--radius-lg);
+  padding:48px;
+  text-align:center;
+}
+.completion-icon{
+  font-size:80px;
+  margin-bottom:16px;
+}
+.completion-title{
+  font-size:32px;
+  font-weight:700;
+  margin:0 0 12px;
+}
+.completion-text{
+  font-size:16px;
+  color:var(--muted);
+  margin:0 0 24px;
+}
+.rewards{
+  display:flex;
+  justify-content:center;
+  gap:32px;
+  margin:32px 0;
+}
+.reward-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+.reward-icon{
+  font-size:48px;
+}
+.reward-label{
+  font-size:16px;
+  font-weight:600;
+}
+.completion-actions{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  margin-top:32px;
+}
+.btn{
+  padding:12px 32px;
+  border-radius:var(--radius-md);
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.15s ease;
+  text-decoration:none;
+  display:inline-block;
+  border:none;
+  font-family:'Poppins',sans-serif;
+}
+.btn-primary{
+  background:var(--accent);
+  color:#fff;
+}
+.btn-primary:hover{
+  background:#7666c0;
+  transform:translateY(-2px);
+}
+.btn-secondary{
+  background:#fff;
+  color:var(--text);
+  border:2px solid #e8eaf0;
+}
+.btn-secondary:hover{
+  border-color:var(--accent);
+  transform:translateY(-2px);
+}
+
+@media (max-width: 768px){
+  .adventure-container{
+    margin-top:60px;
+    padding:0 16px;
+  }
+  .lesson-content{
+    padding:24px 20px;
+  }
+  .lesson-title{
+    font-size:24px;
+  }
+  .lesson-hero-icon{
+    font-size:60px;
+  }
+  .answer-options{
+    grid-template-columns:1fr;
+  }
+  .completion-actions{
+    flex-direction:column;
+  }
+  .adventure-stats{
+    flex-direction:column;
+    gap:12px;
+  }
+}

@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Adventures | Tega Learning</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v=15">
+  <link rel="stylesheet" href="{% static 'adventure.css' %}?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="adventure-body">
+  <nav class="nav">
+    <div class="nav-left">
+      <span class="logo">tega.</span>
+    </div>
+    <ul class="nav-center">
+      <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+      <li><a href="{% url 'chat' %}" class="nav-link">Chat</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      <span class="welcome-text">{{ user.username }}</span>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <div class="mobile-menu-content">
+      <button class="mobile-menu-close" id="mobileMenuClose">×</button>
+      <div class="mobile-menu-header">
+        <span class="logo">tega.</span>
+        <p class="mobile-welcome">{{ user.username }}</p>
+      </div>
+      <ul class="mobile-menu-links">
+        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'chat' %}">Chat</a></li>
+        <li><a href="{% url 'settings' %}">Settings</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="adventure-container">
+    <!-- Progress Header -->
+    <div class="adventure-header">
+      <div class="breadcrumb">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>Math Adventures</span>
+      </div>
+      <div class="adventure-progress-bar">
+        <div class="adventure-progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="adventure-stats">
+        <div class="stat-item">
+          <span class="stat-icon">🎯</span>
+          <span class="stat-label">Lesson 1 of 5</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-icon">⭐</span>
+          <span class="stat-label">0 Stars</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lesson Content -->
+    <div class="lesson-content">
+      <div class="lesson-hero accent-yellow">
+        <div class="lesson-hero-icon">🔢</div>
+        <h1 class="lesson-title">Welcome to Math Adventures!</h1>
+        <p class="lesson-subtitle">Let's explore numbers and shapes together</p>
+      </div>
+
+      <!-- Introduction Section -->
+      <section class="lesson-section">
+        <div class="section-badge">
+          <span class="badge-icon">📖</span>
+          <span class="badge-text">Introduction</span>
+        </div>
+        <h2 class="lesson-heading">What is Math?</h2>
+        <p class="lesson-text">
+          Math is like a superpower that helps us understand the world! We use math every day - when we count our toys, 
+          share snacks with friends, or measure how tall we are. Today, we'll learn about numbers and how they help us count things!
+        </p>
+        <div class="fun-fact">
+          <div class="fun-fact-icon">💡</div>
+          <div class="fun-fact-content">
+            <strong>Fun Fact:</strong> The word "mathematics" comes from the Greek word "mathema" which means "learning" or "knowledge"!
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Activity -->
+      <section class="lesson-section">
+        <div class="section-badge">
+          <span class="badge-icon">🎮</span>
+          <span class="badge-text">Let's Practice!</span>
+        </div>
+        <h2 class="lesson-heading">Count with Tega</h2>
+        <p class="lesson-text">Click on the objects to count them! Can you count all the stars?</p>
+        
+        <div class="counting-game">
+          <div class="counting-items" id="countingItems">
+            <div class="count-item" data-number="1">⭐</div>
+            <div class="count-item" data-number="2">⭐</div>
+            <div class="count-item" data-number="3">⭐</div>
+            <div class="count-item" data-number="4">⭐</div>
+            <div class="count-item" data-number="5">⭐</div>
+          </div>
+          <div class="counting-display">
+            <span class="count-label">You've counted:</span>
+            <span class="count-number" id="countNumber">0</span>
+            <span class="count-label">stars</span>
+          </div>
+          <button class="reset-btn" id="resetCount">Start Over</button>
+        </div>
+      </section>
+
+      <!-- Quiz Section -->
+      <section class="lesson-section">
+        <div class="section-badge">
+          <span class="badge-icon">❓</span>
+          <span class="badge-text">Quiz Time!</span>
+        </div>
+        <h2 class="lesson-heading">Test Your Knowledge</h2>
+        
+        <div class="quiz-container" id="quizContainer">
+          <div class="quiz-question active" data-question="1">
+            <p class="question-text">If you have 3 apples and your friend gives you 2 more, how many apples do you have?</p>
+            <div class="answer-options">
+              <button class="answer-btn" data-correct="false">4</button>
+              <button class="answer-btn" data-correct="true">5</button>
+              <button class="answer-btn" data-correct="false">6</button>
+              <button class="answer-btn" data-correct="false">3</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Completion Section -->
+      <section class="lesson-section" id="completionSection" style="display: none;">
+        <div class="completion-card">
+          <div class="completion-icon">🏆</div>
+          <h2 class="completion-title">Amazing Work!</h2>
+          <p class="completion-text">You've completed your first Math Adventure! You earned:</p>
+          <div class="rewards">
+            <div class="reward-item">
+              <span class="reward-icon">⭐</span>
+              <span class="reward-label">1 Star</span>
+            </div>
+            <div class="reward-item">
+              <span class="reward-icon">🎯</span>
+              <span class="reward-label">5 Points</span>
+            </div>
+          </div>
+          <div class="completion-actions">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+            <button class="btn btn-primary" id="nextLesson">Next Lesson →</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Tega Learning Platform. Empowering young minds across Nigeria.</p>
+    <div class="footer-links">
+      <a href="{% url 'settings' %}">Settings</a>
+    </div>
+  </footer>
+
+  <script src="{% static 'app.js' %}?v=15"></script>
+  <script>
+    // Counting Game
+    let count = 0;
+    const countItems = document.querySelectorAll('.count-item');
+    const countNumber = document.getElementById('countNumber');
+    const resetBtn = document.getElementById('resetCount');
+
+    countItems.forEach(item => {
+      item.addEventListener('click', function() {
+        if (!this.classList.contains('counted')) {
+          this.classList.add('counted');
+          count++;
+          countNumber.textContent = count;
+          
+          if (count === 5) {
+            setTimeout(() => {
+              alert('🎉 Excellent! You counted all 5 stars!');
+            }, 300);
+          }
+        }
+      });
+    });
+
+    resetBtn.addEventListener('click', function() {
+      count = 0;
+      countNumber.textContent = '0';
+      countItems.forEach(item => item.classList.remove('counted'));
+    });
+
+    // Quiz Logic
+    const answerBtns = document.querySelectorAll('.answer-btn');
+    const quizFeedback = document.querySelector('.quiz-feedback');
+    const completionSection = document.getElementById('completionSection');
+    const progressFill = document.querySelector('.adventure-progress-fill');
+
+    answerBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const isCorrect = this.dataset.correct === 'true';
+        
+        // Disable all buttons after selection
+        answerBtns.forEach(b => b.disabled = true);
+        
+        if (isCorrect) {
+          this.classList.add('correct');
+          quizFeedback.innerHTML = '<div class="feedback-correct">✓ Correct! Great job!</div>';
+          
+          // Update progress
+          progressFill.style.width = '100%';
+          
+          // Show completion after delay
+          setTimeout(() => {
+            document.getElementById('quizContainer').style.display = 'none';
+            completionSection.style.display = 'block';
+            completionSection.scrollIntoView({ behavior: 'smooth' });
+          }, 2000);
+        } else {
+          this.classList.add('incorrect');
+          quizFeedback.innerHTML = '<div class="feedback-incorrect">✗ Not quite. Try again!</div>';
+          
+          // Re-enable buttons after delay
+          setTimeout(() => {
+            answerBtns.forEach(b => {
+              b.disabled = false;
+              b.classList.remove('incorrect');
+            });
+            quizFeedback.innerHTML = '';
+          }, 1500);
+        }
+      });
+    });
+
+    // Next Lesson (placeholder)
+    document.getElementById('nextLesson')?.addEventListener('click', function() {
+      alert('Next lesson coming soon! 🚀');
+    });
+  </script>
+</body>
+</html>

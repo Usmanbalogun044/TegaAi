@@ -1,0 +1,66 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tega — Adaptive Learning Companion</title>
+    <meta name="description" content="Tega: Your adaptive learning companion for students, adult learners, and parents." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+  </head>
+  <body class="theme-peach">
+    <main id="app">
+      <!-- Landing Screen -->
+      <section id="screen-landing" class="screen active" aria-labelledby="landing-title">
+        <div class="container">
+          <div class="logo-badge" aria-hidden="true"><img src="{% static 'icons/Logo.svg' %}"></div>
+          <h1 id="landing-title" class="headline">Hi, I'm Tega <span role="img" aria-label="waving hand">👋</span></h1>
+          <p class="subhead">Your adaptive learning companion</p>
+
+          <div class="card-grid">
+            {% if user.is_authenticated %}
+            <button class="role-card" onclick="window.location.href='{% url 'dashboard' %}'" data-role="student" aria-label="I'm a student">
+              <div class="role-icon" aria-hidden="true">🎓</div>
+              <div class="role-title">I'm a<br/>Student</div>
+              <div class="role-meta">Ages 8–16</div>
+            </button>
+            <button class="role-card" onclick="window.location.href='{% url 'dashboard_adult' %}'" data-role="adult" aria-label="I'm an adult learner">
+              <div class="role-icon" aria-hidden="true">👤</div>
+              <div class="role-title">I'm an Adult<br/>Learner</div>
+              <div class="role-meta">Ages 18–40</div>
+            </button>
+            <button class="role-card" onclick="window.location.href='{% url 'dashboard_parent' %}'" data-role="parent" aria-label="I'm a parent">
+              <div class="role-icon" aria-hidden="true">👪</div>
+              <div class="role-title">I'm a Parent</div>
+              <div class="role-meta">Track progress</div>
+            </button>
+            {% else %}
+            <button class="role-card" onclick="window.location.href='{% url 'signup' %}'" data-role="student" aria-label="I'm a student">
+              <div class="role-icon" aria-hidden="true">🎓</div>
+              <div class="role-title">I'm a<br/>Student</div>
+              <div class="role-meta">Ages 8–16</div>
+            </button>
+            <button class="role-card" onclick="window.location.href='{% url 'signup' %}'" data-role="adult" aria-label="I'm an adult learner">
+              <div class="role-icon" aria-hidden="true">👤</div>
+              <div class="role-title">I'm an Adult<br/>Learner</div>
+              <div class="role-meta">Ages 18–40</div>
+            </button>
+            <button class="role-card" onclick="window.location.href='{% url 'signup' %}'" data-role="parent" aria-label="I'm a parent">
+              <div class="role-icon" aria-hidden="true">👪</div>
+              <div class="role-title">I'm a Parent</div>
+              <div class="role-meta">Track progress</div>
+            </button>
+            {% endif %}
+          </div>
+
+          <p class="footnote">Learning designed for everyone, including neurodivergent learners</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="{% static 'app.js' %}?v=2"></script>
+  </body>
+</html>

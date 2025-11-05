@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Learning Path – Tega</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+  <div class="container results-container">
+    <button class="close-btn" aria-label="Close">&times;</button>
+    
+    <div class="moon-icon">🌙</div>
+    
+    <h1 class="results-title">
+      Here's how we'll help you learn your<br>
+      best way ✨
+    </h1>
+    
+    <p class="results-subtitle">
+      Based on your answers, we've created a path that fits your<br>
+      learning style. You can change it anytime in Settings.
+    </p>
+    
+    <div class="path-card">
+      <div class="path-header">
+        <span class="path-icon">{{ learning_path.icon }}</span>
+        <span class="path-name">{{ learning_path.name }}</span>
+      </div>
+      
+      <div class="path-description">
+        {{ learning_path.description }}
+      </div>
+      
+      <div class="path-details">
+        {{ learning_path.details }}
+      </div>
+      
+      <div class="path-note">
+        💡 "This is your learning path. We'll make lessons just right for you."
+      </div>
+    </div>
+
+    {% if quiz_results %}
+    <div class="quiz-responses">
+      <h3 class="responses-title">Your Responses</h3>
+      {% for result in quiz_results %}
+      <div class="response-item">
+        <div class="response-question">{{ forloop.counter }}. {{ result.question }}</div>
+        <div class="response-answer">✓ {{ result.answer }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    
+    <a href="{% url 'dashboard' %}" class="btn-primary start-journey-btn">
+      Start My Journey ✨
+    </a>
+    
+    <a href="{% url 'profile_setup' %}" class="btn-secondary adjust-prefs-btn">
+      ⚙️ Adjust My Preferences
+    </a>
+    
+    <p class="footer-note">
+      Remember, you can always change your settings later. Let's start<br>
+      learning! 🎓
+    </p>
+  </div>
+  
+  <script src="{% static 'app.js' %}?v=3"></script>
+</body>
+</html>

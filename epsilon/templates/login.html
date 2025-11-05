@@ -1,0 +1,54 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Sign in — Tega</title>
+		<link rel="stylesheet" href="{% static 'styles.css' %}" />
+	</head>
+	<body class="theme-peach">
+		<main id="app">
+			<section id="screen-login" class="screen active" aria-labelledby="login-title">
+				<div class="container narrow">
+					<div class="auth-card" role="form" aria-labelledby="login-title">
+						<div class="logo-badge" aria-hidden="true"><img src="{% static 'icons/Logo.svg' %}" alt="Tega logo"></div>
+						<h1 id="login-title" class="headline">Welcome back</h1>
+						<p class="subhead">Sign in to continue to Tega</p>
+
+						{% if messages %}
+							{% for message in messages %}
+								<div class="alert alert-{{ message.tags }}">{{ message }}</div>
+							{% endfor %}
+						{% endif %}
+
+						<form id="login-form" method="post" novalidate>
+							{% csrf_token %}
+							<div class="field">
+								<label class="label" for="email">Email</label>
+								<input type="email" id="email" name="email" value="{{ email|default:'' }}" placeholder="you@example.com" required />
+							</div>
+
+							<div class="field">
+								<label class="label" for="password">Password</label>
+								<input type="password" id="password" name="password" placeholder="Enter your password" required />
+							</div>
+
+							<div class="remember-row">
+								<label class="remember"><input type="checkbox" id="remember" name="remember" /> Remember me</label>
+								<a class="forgot-link" href="#">Forgot?</a>
+							</div>
+
+							<button type="submit" class="btn btn-primary btn-lg">Sign in</button>
+
+							<div class="auth-alt" style="margin-top:18px">
+								<span>Don't have an account?</span>
+								<a href="{% url 'signup' %}">Create an account</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</section>
+		</main>
+	</body>
+</html>

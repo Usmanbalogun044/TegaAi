@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Up Your Profile – Tega</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body class="profile-setup-body">
+  <div class="profile-container">
+    <button class="close-btn profile-close" aria-label="Close">×</button>
+    
+    <div class="profile-header">
+      <div class="profile-avatar-placeholder">
+        <span class="avatar-icon">👤</span>
+      </div>
+      <h1 class="profile-title">Set Up Your Profile</h1>
+      <p class="profile-subtitle">Personalize your learning experience with preferences that work<br>for you.</p>
+    </div>
+
+    <div class="profile-form">
+      <form method="post">
+        {% csrf_token %}
+      <!-- Basic Information -->
+      <div class="profile-section">
+        <div class="section-header">
+          <span class="section-icon">🔵</span>
+          <h2 class="section-title">Basic Information</h2>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="profile-name" class="form-label">Name</label>
+            <input type="text" id="profile-name" class="form-input" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label for="profile-age" class="form-label">Age (optional)</label>
+            <input type="text" id="profile-age" class="form-input" placeholder="Your age">
+          </div>
+        </div>
+      </div>
+
+      <!-- Accessibility Preferences -->
+      <div class="profile-section">
+        <div class="section-header">
+          <span class="section-icon">🟣</span>
+          <h2 class="section-title">Accessibility Preferences</h2>
+        </div>
+        <p class="section-desc">Select features that enhance your learning experience</p>
+
+        <div class="preference-list">
+          <div class="preference-item">
+            <div class="preference-icon">🔊</div>
+            <div class="preference-content">
+              <h3 class="preference-title">Voice Guidance</h3>
+              <p class="preference-desc">Audio narration of on-screen content</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="voice-guidance">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="preference-item">
+            <div class="preference-icon">📖</div>
+            <div class="preference-content">
+              <h3 class="preference-title">Reading Support</h3>
+              <p class="preference-desc">Enhanced readability with dyslexia-friendly formatting</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="reading-support">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="preference-item">
+            <div class="preference-icon">🎬</div>
+            <div class="preference-content">
+              <h3 class="preference-title">Reduced Motion</h3>
+              <p class="preference-desc">Minimize animations and transitions</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="reduced-motion">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="preference-item">
+            <div class="preference-icon">⏰</div>
+            <div class="preference-content">
+              <h3 class="preference-title">Break Reminders</h3>
+              <p class="preference-desc">Periodic notifications to maintain focus and wellbeing</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="break-reminders" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-continue" id="continue-to-dashboard">
+        Continue to Dashboard
+      </button>
+      </form>
+
+      <div class="profile-pagination">
+        <span class="dot"></span>
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="page-info">Step 2 of 3</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'app.js' %}?v=2"></script>
+</body>
+</html>

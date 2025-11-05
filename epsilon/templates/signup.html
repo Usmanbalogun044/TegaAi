@@ -1,0 +1,57 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign up — Tega</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+  </head>
+  <body class="theme-peach">
+    <main id="app">
+      <section id="screen-signup" class="screen active" aria-labelledby="signup-title">
+        <div class="container narrow">
+          <div class="logo-badge" aria-hidden="true"><img src="{% static 'icons/Logo.svg' %}" alt="Tega Logo"></div>
+          <h2 id="signup-title" class="headline">Welcome to Tega</h2>
+          <p class="subhead">Let's get started</p>
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+
+          <form id="signup-form" method="post" action="{% url 'signup' %}" novalidate>
+            {% csrf_token %}
+            <label class="field">
+              <span class="label">Username  </span>
+              <input type="text" id="name" name="name" value="{{ name|default:'' }}" autocomplete="name" placeholder="What should we call you?" required />
+              <span class="error" id="name-error" role="alert"></span>
+            </label>
+
+            <label class="field">
+              <span class="label">Email (optional)</span>
+              <input type="email" id="email" name="email" value="{{ email|default:'' }}" autocomplete="email" placeholder="your.email@example.com" />
+              <span class="error" id="email-error" role="alert"></span>
+            </label>
+
+            <label class="field">
+              <span class="label">Password</span>
+              <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Create a password" required minlength="6" />
+              <span class="error" id="password-error" role="alert"></span>
+            </label>
+
+            <button type="submit" class="btn btn-primary btn-lg" id="continue-btn">Continue</button>
+          </form>
+
+          <p class="auth-alt">Already have an account? <a href="{% url 'login' %}" id="link-signin">Sign in</a></p>
+        </div>
+      </section>
+    </main>
+
+    <script src="{% static 'app.js' %}?v=2"></script>
+  </body>
+</html>

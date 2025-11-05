@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parent Dashboard – Tega</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body class="dashboard-body parent-theme">
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar parent-sidebar">
+      <div class="sidebar-header">
+        <div class="app-logo">
+          <span class="logo-icon"><img src="{% static 'icons/Logo.svg' %}"></span>
+          <span class="logo-text">Tega</span>
+        </div>
+        <button class="collapse-btn" aria-label="Collapse sidebar">‹</button>
+      </div>
+
+      <div class="user-profile parent-profile">
+        <div class="avatar parent-avatar">{{ user.first_name|first|upper|default:"P" }}</div>
+        <div class="user-info">
+          <div class="user-name">{{ user.first_name|default:user.username }}</div>
+          <div class="user-type">Parent Account</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="{% url 'dashboard_parent' %}" class="nav-item active">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">👶</span>
+          <span class="nav-label">Children</span>
+        </a>
+        <a href="{% url 'chat' %}" class="nav-item">
+          <span class="nav-icon">�</span>
+          <span class="nav-label">Messages</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">�</span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-label">Achievements</span>
+        </a>
+      </nav>
+
+      <div class="children-section">
+        <div class="children-header">CHILDREN</div>
+        <a href="#emma" class="child-link active">
+          <span class="child-avatar bg-teal">E</span>
+          <span class="child-name">Emma</span>
+        </a>
+        <a href="#noah" class="child-link">
+          <span class="child-avatar bg-mint">N</span>
+          <span class="child-name">Noah</span>
+        </a>
+      </div>
+
+      <div class="family-progress">
+        <div class="progress-header">Family Progress</div>
+        <div class="progress-value">15</div>
+        <div class="progress-label">badges this week</div>
+      </div>
+
+      <div class="sidebar-footer">
+        <a href="{% url 'settings' %}" class="footer-link">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+        <a href="{% url 'logout' %}" class="footer-link">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Log Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="parent-main">
+      <header class="dashboard-header">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">☰</button>
+        <div class="greeting">
+          <h1 class="greeting-title">Welcome, {{ user.first_name|default:user.username }}</h1>
+          <p class="greeting-subtitle">Family learning dashboard</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" aria-label="Settings">⚙️</button>
+          <button class="icon-btn" aria-label="Notifications">🔔</button>
+        </div>
+      </header>
+
+      <div class="parent-content">
+        <!-- Overview Stats -->
+        <div class="overview-stats">
+          <div class="overview-card">
+            <div class="overview-icon">📚</div>
+            <div class="overview-value">8</div>
+            <div class="overview-label">this week avg.</div>
+          </div>
+          <div class="overview-card">
+            <div class="overview-icon">🎯</div>
+            <div class="overview-value">20</div>
+            <div class="overview-label">Total goals</div>
+          </div>
+          <div class="overview-card">
+            <div class="overview-icon">⏱️</div>
+            <div class="overview-value">240</div>
+            <div class="overview-label">Minutes used</div>
+          </div>
+          <div class="overview-card">
+            <div class="overview-icon">🏆</div>
+            <div class="overview-value">15</div>
+            <div class="overview-label">Achievements</div>
+          </div>
+        </div>
+
+        <!-- Emma's Section -->
+        <section class="child-section">
+          <div class="child-section-header">
+            <div class="child-info">
+              <span class="child-avatar-lg bg-teal">E</span>
+              <div>
+                <h2 class="child-section-name">Emma</h2>
+                <p class="child-section-meta">ID: emma • Active 3 hours ago</p>
+              </div>
+            </div>
+            <a href="#" class="details-link">Details →</a>
+          </div>
+
+          <div class="child-stats-grid">
+            <div class="child-stat">
+              <div class="child-stat-icon">📚</div>
+              <div class="child-stat-value">5</div>
+              <div class="child-stat-label">this Week</div>
+            </div>
+            <div class="child-stat">
+              <div class="child-stat-icon">🎯</div>
+              <div class="child-stat-value">12</div>
+              <div class="child-stat-label">Completed</div>
+            </div>
+            <div class="child-stat">
+              <div class="child-stat-icon">⏱️</div>
+              <div class="child-stat-value">145</div>
+              <div class="child-stat-label">Minutes</div>
+            </div>
+            <div class="child-stat">
+              <div class="child-stat-icon">⭐</div>
+              <div class="child-stat-value">A-</div>
+              <div class="child-stat-label">Avg Grade</div>
+            </div>
+          </div>
+
+          <div class="recent-activity">
+            <h3 class="activity-title">Recent Activity</h3>
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-icon">📖</div>
+                <div class="activity-content">
+                  <div class="activity-name">Math Adventures</div>
+                  <div class="activity-time">45 min</div>
+                </div>
+                <div class="activity-progress">90%</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon">📚</div>
+                <div class="activity-content">
+                  <div class="activity-name">Reading Quest</div>
+                  <div class="activity-time">13 min</div>
+                </div>
+                <div class="activity-progress">88%</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Noah's Section -->
+        <section class="child-section">
+          <div class="child-section-header">
+            <div class="child-info">
+              <span class="child-avatar-lg bg-mint">N</span>
+              <div>
+                <h2 class="child-section-name">Noah</h2>
+                <p class="child-section-meta">ID: noah • Active 1 day ago</p>
+              </div>
+            </div>
+            <a href="#" class="details-link">Details →</a>
+          </div>
+
+          <div class="child-stats-grid">
+            <div class="child-stat">
+              <div class="child-stat-icon">📚</div>
+              <div class="child-stat-value">3</div>
+              <div class="child-stat-label">this Week</div>
+            </div>
+            <div class="child-stat">
+              <div class="child-stat-icon">🎯</div>
+              <div class="child-stat-value">8</div>
+              <div class="child-stat-label">Completed</div>
+            </div>
+            <div class="child-stat">
+              <div class="child-stat-icon">⏱️</div>
+              <div class="child-stat-value">95</div>
+              <div class="child-stat-label">Minutes</div>
+            </div>
+            <div class="child-stat">
+              <div class="child-stat-icon">⭐</div>
+              <div class="child-stat-value">A-</div>
+              <div class="child-stat-label">Avg Grade</div>
+            </div>
+          </div>
+
+          <div class="recent-activity">
+            <h3 class="activity-title">Recent Activity</h3>
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-icon">🔬</div>
+                <div class="activity-content">
+                  <div class="activity-name">Science Lab</div>
+                  <div class="activity-time">48 min</div>
+                </div>
+                <div class="activity-progress">92%</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <div class="parent-quick-actions">
+          <div class="quick-action-card">
+            <div class="quick-action-icon">📊</div>
+            <h3 class="quick-action-title">Analytics</h3>
+            <p class="quick-action-desc">Detailed learning insights and trends</p>
+          </div>
+          <div class="quick-action-card">
+            <div class="quick-action-icon">💬</div>
+            <h3 class="quick-action-title">Messages</h3>
+            <p class="quick-action-desc">Send encouragement and feedback</p>
+          </div>
+          <div class="quick-action-card">
+            <div class="quick-action-icon">👥</div>
+            <h3 class="quick-action-title">Profiles</h3>
+            <p class="quick-action-desc">Manage family member accounts</p>
+          </div>
+        </div>
+
+        <!-- Learning Insight -->
+        <div class="learning-insight-card">
+          <div class="insight-icon-large">💡</div>
+          <div class="insight-content">
+            <h3 class="insight-title-large">Learning Insight</h3>
+            <p class="insight-text-large">Celebrate effort, not just results! Children who are praised for their hard work develop a growth mindset and are more likely to persist through challenges.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="{% static 'app.js' %}?v=14"></script>
+</body>
+</html>
