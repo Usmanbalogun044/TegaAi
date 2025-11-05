@@ -11,12 +11,17 @@ urlpatterns = [
     # Profile and onboarding
     path('profile-setup/', views.profile_setup, name='profile_setup'),
     path('path/', views.path_questionnaire, name='path_questionnaire'),
+    path('adult/', views.adult_questionnaire, name='adult_questionnaire'),
+    path('student/', views.student_questionnaire, name='student_questionnaire'),
     path('results/', views.results_view, name='results'),
     
     # Dashboards
     path('dashboard/', views.dashboard, name='dashboard'),
     path('dashboard/parent/', views.dashboard_parent, name='dashboard_parent'),
     path('dashboard/adult/', views.dashboard_adult, name='dashboard_adult'),
+    path('dashboard/chidi/', views.dashboard_chidi, name='dashboard_chidi'),
+    path('dashboard/tunde/', views.dashboard_tunde, name='dashboard_tunde'),
+    path('dashboard/ngozi/', views.dashboard_ngozi, name='dashboard_ngozi'),
     
     # Chat
     path('chat/', views.chat_view, name='chat'),
@@ -33,4 +38,6 @@ urlpatterns = [
     path('adventure/reading/', views.adventure_reading, name='adventure_reading'),
     path('adventure/science/', views.adventure_science, name='adventure_science'),
     path('adventure/creative/', views.adventure_creative, name='adventure_creative'),
+    path('micro-lesson/', views.micro_lesson, name='micro_lesson'),
+    path('break-timer/', views.break_timer, name='break_timer'),
 ]

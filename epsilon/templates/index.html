@@ -22,12 +22,12 @@
 
           <div class="card-grid">
             {% if user.is_authenticated %}
-            <button class="role-card" onclick="window.location.href='{% url 'dashboard' %}'" data-role="student" aria-label="I'm a student">
+            <button class="role-card" onclick="window.location.href='{% url 'student_questionnaire' %}'" data-role="student" aria-label="I'm a student">
               <div class="role-icon" aria-hidden="true">🎓</div>
               <div class="role-title">I'm a<br/>Student</div>
               <div class="role-meta">Ages 8–16</div>
             </button>
-            <button class="role-card" onclick="window.location.href='{% url 'dashboard_adult' %}'" data-role="adult" aria-label="I'm an adult learner">
+            <button class="role-card" onclick="window.location.href='{% url 'dashboard' %}'" data-role="adult" aria-label="I'm an adult learner">
               <div class="role-icon" aria-hidden="true">👤</div>
               <div class="role-title">I'm an Adult<br/>Learner</div>
               <div class="role-meta">Ages 18–40</div>
@@ -38,12 +38,12 @@
               <div class="role-meta">Track progress</div>
             </button>
             {% else %}
-            <button class="role-card" onclick="window.location.href='{% url 'signup' %}'" data-role="student" aria-label="I'm a student">
+            <button class="role-card" onclick="window.location.href='{% url 'signup' %}?next=student_questionnaire'" data-role="student" aria-label="I'm a student">
               <div class="role-icon" aria-hidden="true">🎓</div>
               <div class="role-title">I'm a<br/>Student</div>
               <div class="role-meta">Ages 8–16</div>
             </button>
-            <button class="role-card" onclick="window.location.href='{% url 'signup' %}'" data-role="adult" aria-label="I'm an adult learner">
+            <button class="role-card" onclick="window.location.href='{% url 'signup' %}?next=dashboard_adult&role=adult'" data-role="adult" aria-label="I'm an adult learner">
               <div class="role-icon" aria-hidden="true">👤</div>
               <div class="role-title">I'm an Adult<br/>Learner</div>
               <div class="role-meta">Ages 18–40</div>

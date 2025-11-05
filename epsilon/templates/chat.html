@@ -23,7 +23,7 @@
       </div>
 
       <div class="user-profile">
-        <div class="avatar">{{ user.first_name|first|upper|default:"�" }}</div>
+        <div class="avatar">{{ user.first_name|first|upper|default:"U" }}</div>
         <div class="user-info">
           <div class="user-name">{{ user.first_name|default:user.username }}</div>
           <div class="user-type">Child Learner</div>
@@ -82,28 +82,26 @@
           <div class="chat-avatar-header"><img src="{% static 'icons/Logo.svg' %}"></div>
           <div class="chat-title-info">
             <h1 class="chat-title">Chat with Tega</h1>
-            <p class="chat-status">● Online</p>
+            <p class="chat-status" id="connection-status">● Online</p>
           </div>
         </div>
-        <a href="{% url 'dashboard' %}" class="back-to-home-btn">
+        <div class="chat-header-actions">
+          <button class="icon-btn" id="read-aloud-btn" aria-label="Toggle read aloud" title="Read responses aloud">
+            🔊
+          </button>
+          <button class="icon-btn" id="mute-btn" aria-label="Toggle sound" title="Mute notification sounds">
+            🔔
+          </button>
+          <a href="{% url 'dashboard' %}" class="back-to-home-btn">
             <span class="home-icon">🏠</span>
             Back to Home
           </a>
-        <button class="icon-btn" id="mute-btn" aria-label="Toggle sound">�</button>
+        </div>
       </header>
 
       <div class="chat-container">
         <div class="chat-messages" id="chat-messages">
-          <!-- Tega's messages -->
-          
-
-          <!-- User's message placeholder (will be added via JS) -->
-          <div class="message user-message" style="display:none;">
-            <div class="message-bubble">
-              <!-- User message will go here -->
-            </div>
-            <div class="message-avatar user-avatar">👤</div>
-          </div>
+          <!-- Messages will be added here dynamically -->
         </div>
 
         <!-- Quick Ideas -->
@@ -148,11 +146,6 @@
             </svg>
           </button>
         </div>
-
-        <!-- Back to Home Button -->
-        <div class="chat-footer">
-          
-        </div>
       </div>
     </main>
   </div>
@@ -160,6 +153,6 @@
   <script>
     window.uniqueId = "{{ unique_id }}";
   </script>
-  <script src="{% static 'app.js' %}?v=20"></script>
+  <script src="{% static 'app.js' %}?v=22"></script>
 </body>
 </html>

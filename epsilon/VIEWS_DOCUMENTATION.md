@@ -70,7 +70,7 @@ This document describes all the views created for the Tega adaptive learning pla
 
 #### `path_questionnaire` - Learning Style Quiz
 - **URL:** `/path/`
-- **Template:** `path.html`
+- **Template:** `path1.html`
 - **Methods:** GET, POST
 - **Description:** Questionnaire to determine user's learning style
 - **Features:**
@@ -284,7 +284,7 @@ templates/
 ├── signup.html             # Registration
 ├── login.html              # Login
 ├── profile-setup.html      # Profile configuration
-├── path.html               # Learning path quiz
+├── path1.html               # Learning path quiz
 ├── results.html            # Learning path results
 ├── dashboard.html          # Student dashboard
 ├── dashboard-parent.html   # Parent dashboard

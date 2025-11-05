@@ -1,0 +1,51 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Break Timer – Tega</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
+</head>
+<body class="break-timer-page">
+  <main class="container">
+    <div class="timer-card">
+      <h1>Break Timer</h1>
+      <p>Take a short break to relax. The timer will count down for <strong id="duration-label">2</strong> minutes.</p>
+      <div id="timer-display" style="font-size:48px;font-weight:700;">02:00</div>
+      <div style="margin-top:18px">
+        <button id="start-btn" class="action-btn">Start</button>
+        <a href="{% url 'dashboard' %}" class="action-btn">Back to Dashboard</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  (function(){
+    const params = new URLSearchParams(location.search);
+    let duration = parseInt(params.get('duration')||'2', 10);
+    if(isNaN(duration) || duration <= 0) duration = 2;
+    document.getElementById('duration-label').textContent = duration;
+    const display = document.getElementById('timer-display');
+    let seconds = duration * 60;
+    function format(s){
+      const m = Math.floor(s/60).toString().padStart(2,'0');
+      const sec = (s%60).toString().padStart(2,'0');
+      return `${m}:${sec}`;
+    }
+    display.textContent = format(seconds);
+    document.getElementById('start-btn').addEventListener('click', function(){
+      const iv = setInterval(()=>{
+        seconds -= 1;
+        display.textContent = format(seconds);
+        if(seconds <= 0){
+          clearInterval(iv);
+          alert('Break finished!');
+          location.href = '{% url "dashboard" %}';
+        }
+      }, 1000);
+    });
+  })();
+  </script>
+</body>
+</html>

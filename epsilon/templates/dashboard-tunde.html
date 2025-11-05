@@ -1,0 +1,59 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tega • Tunde Dashboard</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .calm-card{background:#fff;border-radius:20px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+    .calm-grid{display:grid;grid-template-columns:1fr;gap:16px}
+    .speed-buttons button{border:2px solid #8bc9a0;background:#a1d8b6;padding:10px 16px;border-radius:12px;margin-right:8px;cursor:pointer}
+    .speed-buttons button.active{background:#b5e2c8}
+    .persona-badge{pointer-events:none}
+  </style>
+</head>
+<body class="theme-peach">
+  <div class="container">
+    <div class="logo-badge"><img src="{% static 'icons/Logo.svg' %}"></div>
+    <h1 class="headline">Welcome, Tunde 🐢</h1>
+    <p class="subhead">Take your time. We'll move at your pace. No timers here.</p>
+
+    <div class="calm-grid">
+      <div class="calm-card">
+        <h3>Continue Where You Left Off</h3>
+        <p>Understanding Fractions — Step 3 of 5</p>
+        <div style="background:#e8f5ee;height:12px;border-radius:10px;overflow:hidden"><div style="width:60%;height:100%;background:#7c6fd6"></div></div>
+        <div style="margin-top:12px;display:flex;gap:10px">
+          <a class="tunde-button" href="{% url 'micro_lesson' %}">Continue Learning</a>
+          <a class="tunde-button" href="{% url 'micro_lesson' %}?practice=1">Extra Practice</a>
+        </div>
+      </div>
+
+      <div class="calm-card">
+        <h3>Choose Your Learning Speed</h3>
+        <p class="help-text">Pick what feels comfortable today.</p>
+        <div class="speed-buttons">
+          <button data-speed="0.7">🐢 Extra Slow</button>
+          <button data-speed="1.0" class="active">🚶 Comfortable</button>
+          <button data-speed="1.3">🏃 Normal</button>
+        </div>
+      </div>
+
+      <div class="calm-card">
+        <h3>Concepts You've Mastered ⭐</h3>
+        <ul>
+          <li>Addition & Subtraction</li>
+          <li>Multiplication Basics</li>
+          <li>Understanding Decimals</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'persona-detection.js' %}"></script>
+  <script src="{% static 'dashboards.js' %}"></script>
+</body>
+</html>

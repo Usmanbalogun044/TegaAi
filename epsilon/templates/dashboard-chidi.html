@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tega • Chidi Dashboard</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .chidi-stats-bar{display:flex;gap:12px;align-items:center;justify-content:space-between;background:#fff;border-radius:18px;padding:12px 16px;box-shadow:0 10px 30px rgba(0,0,0,.08);}
+    .stat-item{display:flex;gap:8px;align-items:center;font-weight:700}
+    .stat-icon{font-size:22px}
+    .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:18px}
+    .quick-card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);text-align:center;cursor:pointer;border:3px solid transparent}
+    .quick-card:hover{transform:translateY(-2px);border-color:#ffd700}
+    .big-emoji{font-size:38px;display:block;margin-bottom:8px}
+    .persona-badge{pointer-events:none}
+  </style>
+</head>
+<body class="theme-peach">
+  <div class="container">
+    <div class="logo-badge"><img src="{% static 'icons/Logo.svg' %}"></div>
+    <div class="chidi-stats-bar">
+      <div class="stat-item"><span class="stat-icon">⚡</span><span id="xp-points">0 XP</span></div>
+      <div class="stat-item"><span class="stat-icon">🔥</span><span id="streak-days">0 Days</span></div>
+      <div class="stat-item"><span class="stat-icon">🏆</span><span id="badges-count">0 Badges</span></div>
+    </div>
+
+    <h1 class="headline">Hey Chidi, ready to level up? 🎮</h1>
+    <p class="subhead">Complete quick 5‑minute quests to earn XP and keep your streak alive!</p>
+
+    <div class="quick-grid">
+      <a id="chidi-start-lesson" class="quick-card" href="{% url 'micro_lesson' %}">
+        <span class="big-emoji">🔢</span>
+        <strong>Start 5‑min Lesson</strong>
+        <div>+10 XP</div>
+      </a>
+      <a class="quick-card" href="{% url 'chat' %}">
+        <span class="big-emoji">💬</span>
+        <strong>Talk to Tega</strong>
+        <div>Get quick tips</div>
+      </a>
+      <button id="chidi-take-break" class="quick-card">
+        <span class="big-emoji">🧘</span>
+        <strong>Take a Break</strong>
+        <div>5 min • Ocean 🌊</div>
+      </button>
+      <a class="quick-card" href="{% url 'micro_lesson' %}">
+        <span class="big-emoji">🎯</span>
+        <strong>Daily Quest</strong>
+        <div>Complete 3 lessons</div>
+      </a>
+    </div>
+
+    <h2 style="margin-top:28px">Badges Earned Today</h2>
+    <div class="quick-grid">
+      <div class="quick-card"><span class="big-emoji">🌟</span>First Steps</div>
+      <div class="quick-card"><span class="big-emoji">⚡</span>Speed Demon</div>
+      <div class="quick-card"><span class="big-emoji">🧠</span>Focus Master</div>
+    </div>
+  </div>
+
+  <script src="{% static 'persona-detection.js' %}"></script>
+  <script src="{% static 'dashboards.js' %}"></script>
+</body>
+</html>

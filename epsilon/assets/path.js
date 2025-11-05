@@ -39,7 +39,7 @@ const PERSONAS = {
       "🖼️ Picture-based navigation",
       "✅ Patient, encouraging feedback"
     ],
-    dashboard: "/dashboard/adult/",  // Changed to Django URL
+  dashboard: "/dashboard/",  // Always go to main dashboard
     settings: {
       audioFirst: true,
       dyslexicFriendly: true,
@@ -249,8 +249,9 @@ function redirectToDashboard(persona) {
   createConfetti();
   
   // Redirect after short delay to show confetti
+  // Force redirect to main dashboard to avoid persona-specific URLs
   setTimeout(() => {
-    window.location.href = personaData.dashboard;
+    window.location.href = '/dashboard/';
   }, 1000);
 }
 
@@ -284,3 +285,88 @@ window.TegaPersona = {
     return profile && profile.persona === personaName;
   }
 };
+
+(function(){
+  // Utility: read CSRF cookie
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^|; )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
+  // Safe persona detector fallback (if detectPersona exists elsewhere it will be used)
+  function detectPersonaFromAnswers(answers) {
+    if (typeof detectPersona === 'function') {
+      try { return detectPersona(answers); } catch(e){}
+    }
+    // simple fallback: prefer ngozi if readingLevel is 'struggle' or learningGoal life-skills
+    if (answers.readingLevel === 'struggle' || answers.learningGoal === 'life-skills') return 'ngozi';
+    if (answers.focusTime === '5') return 'chidi';
+    return 'tunde';
+  }
+
+  // Auto-submit + redirect behavior is opt-in per-template.
+  // Templates that want immediate redirect when an option is chosen should
+  // add `data-auto-redirect="true"` to the <form id="personaForm">.
+  const personaForm = document.getElementById('personaForm');
+  if (personaForm) {
+    const shouldAuto = personaForm.dataset.autoRedirect === 'true';
+    if (shouldAuto) {
+      const radios = personaForm.querySelectorAll('input[type="radio"]');
+      radios.forEach(r => r.addEventListener('change', onAnySelection));
+    }
+  }
+
+  function onAnySelection() {
+    if (!personaForm) return;
+
+    // collect current answers (may be partial)
+    const fd = new FormData(personaForm);
+    const answers = {
+      learningStyle: fd.get('learningStyle') || '',
+      focusTime: fd.get('focusTime') || '',
+      readingLevel: fd.get('readingLevel') || '',
+      learningGoal: fd.get('learningGoal') || ''
+    };
+
+    const persona = detectPersonaFromAnswers(answers);
+
+    // set hidden field if present
+    const hidden = document.getElementById('persona-field');
+    if (hidden) hidden.value = persona;
+
+    // Save profile locally (optional)
+    try {
+      const profile = {
+        persona,
+        answers,
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem('tegaLearningProfile', JSON.stringify(profile));
+      sessionStorage.setItem('currentPersona', persona);
+    } catch (e) { /* ignore storage errors */ }
+
+    // POST the form to server so session is saved, then redirect to /dashboard/
+    const action = personaForm.getAttribute('action') || '/path_questionnaire/';
+    const csrftoken = getCookie('csrftoken');
+
+    // send form data (including hidden persona) to server
+    const postData = new FormData(personaForm);
+    // ensure persona included
+    postData.set('persona', persona);
+
+    fetch(action, {
+      method: 'POST',
+      body: postData,
+      credentials: 'same-origin',
+      headers: csrftoken ? { 'X-CSRFToken': csrftoken } : {}
+    }).catch((err) => {
+      // still redirect even if save fails
+      console.warn('Could not POST persona (will still redirect):', err);
+    }).finally(() => {
+      // redirect to fixed dashboard route
+      window.location.href = '/dashboard/';
+    });
+  }
+
+  // ...existing code...
+})();

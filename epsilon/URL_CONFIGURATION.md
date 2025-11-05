@@ -11,7 +11,7 @@
 | Login | `/login/` | `login` | `login.html` |
 | Logout | `/logout/` | `logout` | N/A (redirects) |
 | Profile Setup | `/profile-setup/` | `profile_setup` | `profile-setup.html` |
-| Learning Path Quiz | `/path/` | `path_questionnaire` | `path.html` |
+| Learning Path Quiz | `/path/` | `path_questionnaire` | `path1.html` |
 | Results | `/results/` | `results` | `results.html` |
 | Dashboard (Student) | `/dashboard/` | `dashboard` | `dashboard.html` |
 | Dashboard (Adult) | `/dashboard/adult/` | `dashboard_adult` | `dashboard-adult.html` |
@@ -42,7 +42,7 @@
 ✅ Submit → Redirects to `path_questionnaire`  
 ✅ CSRF token included
 
-### 5. **path.html** (Questionnaire)
+### 5. **path1.html** (Questionnaire)
 ✅ Form action → POST to same page  
 ✅ Submit → Redirects to `results`  
 ✅ CSRF token included

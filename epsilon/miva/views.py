@@ -16,6 +16,14 @@ def index(request):
     return render(request, 'index.html')
 
 
+def student_questionnaire(request):
+    """
+    Public student questionnaire page (no login required).
+    Renders the `student.html` template used for the student onboarding flow.
+    """
+    return render(request, 'student.html')
+
+
 def signup_view(request):
     """
     User signup/registration view
@@ -28,6 +36,8 @@ def signup_view(request):
         name = request.POST.get('name', '').strip()
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password', '').strip()
+        role = request.POST.get('role', '').strip()
+        next_dest = request.POST.get('next', '').strip()
         
         # Validate required fields
         errors = []
@@ -55,7 +65,9 @@ def signup_view(request):
                 messages.error(request, error)
             return render(request, 'signup.html', {
                 'name': name,
-                'email': email
+                'email': email,
+                'role': role,
+                'next': next_dest
             })
         
         # Create username from email or name
@@ -91,21 +103,35 @@ def signup_view(request):
             
             # Log the user in
             login(request, user)
-            
+
             messages.success(request, f'Welcome to Tega, {name}! 🎉')
-            
-            # Redirect to path questionnaire
+
+            # If a next destination (view name) was provided and is allowed, redirect there
+            allowed_next = {'student_questionnaire', 'path_questionnaire', 'adult_questionnaire', 'dashboard', 'dashboard_adult'}
+            if next_dest in allowed_next:
+                return redirect(next_dest)
+
+            # If the signup was started from the adult flow, send straight to adult dashboard
+            if role == 'adult':
+                return redirect('dashboard_adult')
+
+            # Otherwise continue to the path questionnaire
             return redirect('path_questionnaire')
             
         except Exception as e:
             messages.error(request, f'An error occurred while creating your account. Please try again.')
             return render(request, 'signup.html', {
                 'name': name,
-                'email': email
+                'email': email,
+                'role': request.POST.get('role', ''),
+                'next': next_dest
             })
     
     # GET request - show signup form
-    return render(request, 'signup.html')
+    return render(request, 'signup.html', {
+        'role': request.GET.get('role', ''),
+        'next': request.GET.get('next', '')
+    })
 
 
 def login_view(request):
@@ -275,16 +301,73 @@ def path_questionnaire(request):
         request.session['persona'] = persona
         
         # Redirect based on persona to appropriate dashboard
+        # All personas should go to the main dashboard route by default
         persona_dashboards = {
             'chidi': 'dashboard',
-            'ngozi': 'dashboard_adult',
+            'ngozi': 'dashboard',
             'tunde': 'dashboard'
         }
-        
+
         dashboard_route = persona_dashboards.get(persona, 'dashboard')
+        # Debug logging to help trace unexpected redirects (will appear in server console)
+        try:
+            print(f"Path questionnaire submitted. persona={persona!r} -> redirecting to route: {dashboard_route}")
+        except Exception:
+            pass
         return redirect(dashboard_route)
     
-    return render(request, 'path.html')
+    return render(request, 'path2.html')
+
+
+def adult_questionnaire(request):
+    """Adult onboarding questionnaire (public). On POST save quiz results to session and redirect to adult dashboard."""
+    if request.method == 'POST':
+        learning_style = request.POST.get('learningStyle', '')
+        focus_time = request.POST.get('focusTime', '')
+        reading_level = request.POST.get('readingLevel', '')
+        learning_goal = request.POST.get('learningGoal', '')
+        persona = request.POST.get('persona', '')
+
+        # Map labels (reuse same mappings as path_questionnaire)
+        style_labels = {
+            'visual-active': 'Pictures, Games & Videos',
+            'audio-patient': 'Listening & Repeating',
+            'slow-steady': 'Step-by-Step & Slow',
+            'mixed': 'A Mix of Everything'
+        }
+        focus_labels = {
+            '5': '5-10 minutes',
+            '15': '10-20 minutes',
+            '30': '20-30 minutes',
+            'flex': 'It Depends'
+        }
+        reading_labels = {
+            'struggle': 'I Find It Very Hard',
+            'slow': 'I Can Read But It Takes Time',
+            'ok': "I'm Okay with Reading",
+            'confident': 'I Love Reading!'
+        }
+        goal_labels = {
+            'school': 'Help with School Subjects',
+            'life-skills': 'Real Life Skills',
+            'catch-up': 'Catch Up at My Own Speed',
+            'confidence': 'Build Confidence'
+        }
+
+        quiz_results = [
+            {'question': 'How do you learn best?', 'answer': style_labels.get(learning_style, learning_style)},
+            {'question': 'How long can you usually focus on one thing?', 'answer': focus_labels.get(focus_time, focus_time)},
+            {'question': 'How do you feel about reading?', 'answer': reading_labels.get(reading_level, reading_level)},
+            {'question': 'What do you want to learn most?', 'answer': goal_labels.get(learning_goal, learning_goal)}
+        ]
+
+        request.session['quiz_results'] = quiz_results
+        request.session['persona'] = persona
+
+        # For adult flow, redirect to adult dashboard
+        return redirect('dashboard_adult')
+
+    return render(request, 'adult.html')
 
 
 @login_required
@@ -350,6 +433,60 @@ def dashboard_adult(request):
     Adult learner dashboard view
     """
     return render(request, 'dashboard-adult.html')
+
+
+@login_required
+def dashboard_chidi(request):
+    """Chidi-specific dashboard view"""
+    user = request.user
+    preferences = request.session.get('preferences', {})
+    streak_days = 0
+    total_points = 0
+
+    context = {
+        'user': user,
+        'streak_days': streak_days,
+        'total_points': total_points,
+        'preferences': preferences,
+    }
+
+    return render(request, 'dashboard-chidi.html', context)
+
+
+@login_required
+def dashboard_tunde(request):
+    """Tunde-specific dashboard view"""
+    user = request.user
+    preferences = request.session.get('preferences', {})
+    streak_days = 0
+    total_points = 0
+
+    context = {
+        'user': user,
+        'streak_days': streak_days,
+        'total_points': total_points,
+        'preferences': preferences,
+    }
+
+    return render(request, 'dashboard-tunde.html', context)
+
+
+@login_required
+def dashboard_ngozi(request):
+    """Ngozi-specific dashboard view"""
+    user = request.user
+    preferences = request.session.get('preferences', {})
+    streak_days = 0
+    total_points = 0
+
+    context = {
+        'user': user,
+        'streak_days': streak_days,
+        'total_points': total_points,
+        'preferences': preferences,
+    }
+
+    return render(request, 'dashboard-ngozi.html', context)
 
 
 @login_required
@@ -537,3 +674,29 @@ def adventure_creative(request):
     Creative Studio lesson page
     """
     return render(request, 'adventure-creative.html')
+
+
+@login_required
+def micro_lesson(request):
+    """Micro lesson page (short interactive lesson)"""
+    # allow optional query params like ?practice=1 and pass to template
+    practice = request.GET.get('practice')
+    context = {
+        'practice': practice,
+    }
+    return render(request, 'micro-lesson.html', context)
+
+
+@login_required
+def break_timer(request):
+    """Simple break timer page. Accepts optional ?duration= (minutes)"""
+    duration = request.GET.get('duration', '2')
+    try:
+        duration = int(duration)
+    except Exception:
+        duration = 2
+
+    context = {
+        'duration': duration,
+    }
+    return render(request, 'break-timer.html', context)

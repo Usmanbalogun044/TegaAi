@@ -1,0 +1,117 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tega • Ngozi Dashboard</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body.ngozi-mode{font-family:'Comic Sans MS','Poppins',sans-serif;letter-spacing:.12em;line-height:1.8;background:#faf8f3;color:#2e2e2e}
+    .tile{background:#fff;border-radius:18px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.08);text-align:center}
+    .tile .icon{font-size:52px;display:block;margin-bottom:8px}
+    .big-audio{display:inline-flex;align-items:center;gap:10px;background:#4a90e2;color:#fff;border:none;border-radius:14px;padding:12px 18px;font-weight:700;cursor:pointer}
+    .tile a, .tile button{font-size:18px}
+    .persona-badge{pointer-events:none}
+  </style>
+</head>
+<body class="theme-peach ngozi-mode">
+  <div class="container">
+    <div class="logo-badge"><img src="{% static 'icons/Logo.svg' %}"></div>
+    <h1 class="headline">Welcome, Ngozi 💙</h1>
+    <p class="subhead">Tap the speaker to listen. Learn real life skills without pressure.</p>
+
+    <button id="listen-page" class="big-audio">🔊 Listen to this page</button>
+
+    <div class="card-grid" style="margin-top:20px">
+      <div class="tile">
+        <span class="icon">🏦</span>
+        <h3 class="read-aloud">Understanding Bank Forms</h3>
+        <p class="read-aloud">Learn how to fill deposit slips and simple forms.</p>
+  <a class="big-audio" href="{% url 'micro_lesson' %}">🔊 Start Lesson</a>
+      </div>
+      <div class="tile">
+        <span class="icon">💰</span>
+        <h3 class="read-aloud">Market Math Made Easy</h3>
+        <p class="read-aloud">Practice real prices and quick totals.</p>
+  <a class="big-audio" href="{% url 'micro_lesson' %}">🔊 Start Lesson</a>
+      </div>
+      <div class="tile">
+        <span class="icon">📝</span>
+        <h3 class="read-aloud">Reading Contracts</h3>
+        <p class="read-aloud">Understand simple contract words step by step.</p>
+  <a class="big-audio" href="{% url 'micro_lesson' %}">🔊 Start Lesson</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'persona-detection.js' %}"></script>
+  <script src="{% static 'dashboards.js' %}"></script>
+  <script>
+  (function(){
+    // Simple TTS helper for Ngozi dashboard
+    const synth = window.speechSynthesis;
+
+    function speakSequence(texts, opts){
+      if(!texts || !texts.length) return;
+      opts = Object.assign({rate:0.95, pitch:1, lang: 'en-GB'}, opts || {});
+
+      let i = 0;
+
+      function speakNext(){
+        if(i >= texts.length) return;
+        const text = texts[i] && texts[i].trim();
+        i++;
+        if(!text) {
+          // skip empty
+          speakNext();
+          return;
+        }
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = opts.lang;
+        u.rate = opts.rate;
+        u.pitch = opts.pitch;
+        u.onend = speakNext;
+        u.onerror = speakNext;
+        synth.speak(u);
+      }
+
+      if(synth.speaking) synth.cancel();
+      speakNext();
+    }
+
+    // Listen to whole page (headline + all .read-aloud nodes)
+    const listenBtn = document.getElementById('listen-page');
+    if(listenBtn){
+      listenBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        const headline = (document.querySelector('.headline') || {}).innerText || document.title || '';
+        const nodes = Array.from(document.querySelectorAll('.read-aloud'));
+        const texts = [headline].concat(nodes.map(n => n.innerText || '').filter(Boolean));
+        speakSequence(texts, {rate:0.95, pitch:1, lang: 'en-GB'});
+      });
+    }
+
+    // Per-tile speak: tiles have .tile and inside an element with class .big-audio
+    document.querySelectorAll('.tile .big-audio').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        const tile = btn.closest('.tile');
+        if(!tile) return;
+        const title = (tile.querySelector('h3') || {}).innerText || '';
+        const desc = (tile.querySelector('p') || {}).innerText || '';
+        speakSequence([title, desc], {rate:0.95, pitch:1, lang: 'en-GB'});
+      });
+    });
+
+    // Keyboard: Esc to stop speaking
+    document.addEventListener('keydown', function(ev){
+      if(ev.key === 'Escape' && synth.speaking){
+        synth.cancel();
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

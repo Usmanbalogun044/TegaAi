@@ -15,7 +15,7 @@ const PERSONAS = {
       "🔊 Voice guidance and sound effects",
       "📱 Phone-optimized controls"
     ],
-    dashboard: "/dashboard/",  // Changed to Django URL
+  dashboard: "/dashboard/chidi/",
     settings: {
       maxLessonDuration: 5,
       gamification: true,
@@ -39,7 +39,7 @@ const PERSONAS = {
       "🖼️ Picture-based navigation",
       "✅ Patient, encouraging feedback"
     ],
-  dashboard: "/dashboard/",  // Always go to main dashboard
+  dashboard: "/dashboard/ngozi/",
     settings: {
       audioFirst: true,
       dyslexicFriendly: true,
@@ -63,7 +63,7 @@ const PERSONAS = {
       "⭐ Encouragement, not pressure",
       "📊 Track understanding, not speed"
     ],
-    dashboard: "/dashboard/",  // Changed to Django URL (can be customized)
+  dashboard: "/dashboard/tunde/",
     settings: {
       selfPaced: true,
       noTimers: true,
@@ -76,32 +76,27 @@ const PERSONAS = {
 };
 
 // Form handling
-if (document.getElementById('personaForm')) {
-  document.getElementById('personaForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Collect form data
-    const formData = new FormData(e.target);
-    const answers = {
-      learningStyle: formData.get('learningStyle'),
-      focusTime: formData.get('focusTime'),
-      readingLevel: formData.get('readingLevel'),
-      learningGoal: formData.get('learningGoal')
-    };
-    
-    // Detect persona
-    const detectedPersona = detectPersona(answers);
-    
-    // Save to localStorage
-    saveUserProfile(detectedPersona, answers);
-    
-    // Set hidden field
-    document.getElementById('persona-field').value = detectedPersona;
-    
-    // Show loading then redirect directly to dashboard
-    showLoadingThenRedirect(detectedPersona);
-  });
-}
+document.getElementById('personaForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  // Collect form data
+  const formData = new FormData(e.target);
+  const answers = {
+    learningStyle: formData.get('learningStyle'),
+    focusTime: formData.get('focusTime'),
+    readingLevel: formData.get('readingLevel'),
+    learningGoal: formData.get('learningGoal')
+  };
+  
+  // Detect persona
+  const detectedPersona = detectPersona(answers);
+  
+  // Save to localStorage
+  saveUserProfile(detectedPersona, answers);
+  
+  // Show loading animation
+  showLoading(detectedPersona);
+});
 
 // Persona detection algorithm
 function detectPersona(answers) {
@@ -210,8 +205,8 @@ function saveUserProfile(persona, answers) {
   console.log('Profile saved:', profile);
 }
 
-// Loading animation then redirect to dashboard
-function showLoadingThenRedirect(persona) {
+// Loading animation with messages
+function showLoading(persona) {
   const form = document.getElementById('personaForm');
   const loading = document.getElementById('loadingState');
   
@@ -235,24 +230,45 @@ function showLoadingThenRedirect(persona) {
       messageIndex++;
     } else {
       clearInterval(interval);
-      // Redirect directly to persona dashboard
-      redirectToDashboard(persona);
+      showResult(persona);
     }
-  }, 600);
+  }, 800);
 }
 
-// Redirect to appropriate dashboard
-function redirectToDashboard(persona) {
+// Show persona result
+function showResult(persona) {
+  const loading = document.getElementById('loadingState');
+  const result = document.getElementById('resultPreview');
   const personaData = PERSONAS[persona];
   
-  // Add confetti before redirect
-  createConfetti();
+  loading.style.display = 'none';
+  result.style.display = 'block';
   
-  // Redirect after short delay to show confetti
-  // Force redirect to main dashboard to avoid persona-specific URLs
+  // Set persona icon
+  document.getElementById('personaIcon').textContent = personaData.icon;
+  
+  // Set description
+  document.getElementById('personaDescription').textContent = personaData.description;
+  
+  // Set features
+  const featuresHTML = personaData.features.map(feature => 
+    `<div class="feature-item">${feature}</div>`
+  ).join('');
+  document.getElementById('personaFeatures').innerHTML = featuresHTML;
+  
+  // Confetti celebration
   setTimeout(() => {
-    window.location.href = '/dashboard/';
-  }, 1000);
+    createConfetti();
+  }, 300);
+}
+
+// Proceed to dashboard
+function proceedToDashboard() {
+  const profile = JSON.parse(localStorage.getItem('tegaLearningProfile'));
+  const dashboardUrl = profile.personaData.dashboard;
+  
+  // Redirect to persona-specific dashboard
+  window.location.href = dashboardUrl;
 }
 
 // Confetti animation
@@ -271,6 +287,34 @@ function createConfetti() {
     
     setTimeout(() => confetti.remove(), 5000);
   }
+}
+
+// Auto-fill for testing (remove in production)
+if (window.location.search.includes('test=chidi')) {
+  setTimeout(() => {
+    document.querySelector('[name="learningStyle"][value="visual-active"]').checked = true;
+    document.querySelector('[name="focusTime"][value="5"]').checked = true;
+    document.querySelector('[name="readingLevel"][value="ok"]').checked = true;
+    document.querySelector('[name="learningGoal"][value="school"]').checked = true;
+  }, 100);
+}
+
+if (window.location.search.includes('test=ngozi')) {
+  setTimeout(() => {
+    document.querySelector('[name="learningStyle"][value="audio-patient"]').checked = true;
+    document.querySelector('[name="focusTime"][value="15"]').checked = true;
+    document.querySelector('[name="readingLevel"][value="struggle"]').checked = true;
+    document.querySelector('[name="learningGoal"][value="life-skills"]').checked = true;
+  }, 100);
+}
+
+if (window.location.search.includes('test=tunde')) {
+  setTimeout(() => {
+    document.querySelector('[name="learningStyle"][value="slow-steady"]').checked = true;
+    document.querySelector('[name="focusTime"][value="30"]').checked = true;
+    document.querySelector('[name="readingLevel"][value="slow"]').checked = true;
+    document.querySelector('[name="learningGoal"][value="catch-up"]').checked = true;
+  }, 100);
 }
 
 // Export for use in other files

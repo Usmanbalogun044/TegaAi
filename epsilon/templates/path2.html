@@ -1,0 +1,237 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tell Us About Yourself - Tega Learning</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v=onboarding2">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="onboarding-body">
+  <div class="container">
+    <div class="onboarding-header">
+      <div class="tega-avatar">
+        <a href="/" aria-label="Tega Learning homepage">
+          <img src="{% static 'icons/Logo.svg' %}" alt="Tega Learning logo" class="tega-logo" width="160" height="40">
+        </a>
+      </div>
+      <h1>Let's Make Learning Perfect for You!</h1>
+      <p class="subtitle">Answer a few quick questions so Tega can create your personalized experience</p>
+    </div>
+
+  <form id="personaForm" class="persona-form" method="post" action="{% url 'path_questionnaire' %}" data-auto-redirect="true">
+      {% csrf_token %}
+      <input type="hidden" name="persona" id="persona-field" value="">
+      
+      <!-- Question 1: Learning Style -->
+      <div class="question-card">
+        <div class="question-number">1 of 4</div>
+        <h3 class="question-title">How do you learn best?</h3>
+        <p class="question-hint">Pick what feels most natural to you</p>
+        
+        <div class="options-grid">
+          <label class="option-card">
+            <input type="radio" name="learningStyle" value="visual-active" required>
+            <div class="option-content">
+              <span class="option-icon">🎮</span>
+              <span class="option-text">Pictures, Games & Videos</span>
+              <span class="option-subtext">I love interactive things</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="learningStyle" value="audio-patient">
+            <div class="option-content">
+              <span class="option-icon">🔊</span>
+              <span class="option-text">Listening & Repeating</span>
+              <span class="option-subtext">I prefer to hear things</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="learningStyle" value="slow-steady">
+            <div class="option-content">
+              <span class="option-icon">🐢</span>
+              <span class="option-text">Step-by-Step & Slow</span>
+              <span class="option-subtext">I need time to understand</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="learningStyle" value="mixed">
+            <div class="option-content">
+              <span class="option-icon">🌈</span>
+              <span class="option-text">A Mix of Everything</span>
+              <span class="option-subtext">I like variety</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 2: Focus Time -->
+      <div class="question-card">
+        <div class="question-number">2 of 4</div>
+        <h3 class="question-title">How long can you usually focus on one thing?</h3>
+        <p class="question-hint">Be honest - there's no wrong answer!</p>
+        
+        <div class="options-grid">
+          <label class="option-card">
+            <input type="radio" name="focusTime" value="5" required>
+            <div class="option-content">
+              <span class="option-icon">⚡</span>
+              <span class="option-text">5-10 minutes</span>
+              <span class="option-subtext">I get distracted easily</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="focusTime" value="15">
+            <div class="option-content">
+              <span class="option-icon">🕐</span>
+              <span class="option-text">10-20 minutes</span>
+              <span class="option-subtext">I can focus for a bit</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="focusTime" value="30">
+            <div class="option-content">
+              <span class="option-icon">📚</span>
+              <span class="option-text">20-30 minutes</span>
+              <span class="option-subtext">I can concentrate well</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="focusTime" value="flex">
+            <div class="option-content">
+              <span class="option-icon">🤷</span>
+              <span class="option-text">It Depends</span>
+              <span class="option-subtext">Changes day to day</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 3: Reading Confidence -->
+      <div class="question-card">
+        <div class="question-number">3 of 4</div>
+        <h3 class="question-title">How do you feel about reading?</h3>
+        <p class="question-hint">Everyone has different strengths!</p>
+        
+        <div class="options-grid">
+          <label class="option-card">
+            <input type="radio" name="readingLevel" value="struggle" required>
+            <div class="option-content">
+              <span class="option-icon">😅</span>
+              <span class="option-text">I Find It Very Hard</span>
+              <span class="option-subtext">Letters get confusing</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="readingLevel" value="slow">
+            <div class="option-content">
+              <span class="option-icon">⏱️</span>
+              <span class="option-text">I Can Read But It Takes Time</span>
+              <span class="option-subtext">I need to go slowly</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="readingLevel" value="ok">
+            <div class="option-content">
+              <span class="option-icon">👍</span>
+              <span class="option-text">I'm Okay with Reading</span>
+              <span class="option-subtext">Not my favorite but I can do it</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="readingLevel" value="confident">
+            <div class="option-content">
+              <span class="option-icon">📖</span>
+              <span class="option-text">I Love Reading!</span>
+              <span class="option-subtext">Books are my friends</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 4: Learning Goal -->
+      <div class="question-card">
+        <div class="question-number">4 of 4</div>
+        <h3 class="question-title">What do you want to learn most?</h3>
+        <p class="question-hint">Choose your main goal right now</p>
+        
+        <div class="options-grid">
+          <label class="option-card">
+            <input type="radio" name="learningGoal" value="school" required>
+            <div class="option-content">
+              <span class="option-icon">📝</span>
+              <span class="option-text">Help with School Subjects</span>
+              <span class="option-subtext">Math, English, Science</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="learningGoal" value="life-skills">
+            <div class="option-content">
+              <span class="option-icon">💰</span>
+              <span class="option-text">Real Life Skills</span>
+              <span class="option-subtext">Money, forms, everyday tasks</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="learningGoal" value="catch-up">
+            <div class="option-content">
+              <span class="option-icon">🎯</span>
+              <span class="option-text">Catch Up at My Own Speed</span>
+              <span class="option-subtext">Learn things I missed</span>
+            </div>
+          </label>
+          
+          <label class="option-card">
+            <input type="radio" name="learningGoal" value="confidence">
+            <div class="option-content">
+              <span class="option-icon">💪</span>
+              <span class="option-text">Build Confidence</span>
+              <span class="option-subtext">Feel good about learning</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button type="submit" class="btn-primary btn-large" id="submitBtn">
+          <span>Create My Learning Path</span>
+          <span class="btn-icon">✨</span>
+        </button>
+      </div>
+  </form>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-state" style="display: none;">
+      <div class="spinner"></div>
+      <h2>Creating Your Perfect Learning Experience...</h2>
+      <p id="loadingMessage">Analyzing your answers</p>
+    </div>
+
+    <!-- Result Preview -->
+    <div id="resultPreview" class="result-preview" style="display: none;">
+      <div class="result-icon" id="personaIcon">🎮</div>
+      <h2>We've Created the Perfect Plan for You!</h2>
+      <p class="persona-description" id="personaDescription"></p>
+      <div class="persona-features" id="personaFeatures"></div>
+      <button class="btn-primary" onclick="proceedToDashboard()">
+        Let's Start Learning! 🚀
+      </button>
+    </div>
+  </div>
+
+  <script src="{% static 'path.js' %}?v=3"></script>
+</body>
+</html>

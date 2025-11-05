@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Micro Lesson – Tega</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body class="micro-lesson-body adhd-mode">
+  <div class="micro-lesson-container">
+    <!-- ADHD Mode Indicator -->
+    <div class="adhd-mode-banner">
+      <span class="mode-icon">⚡</span>
+      <span class="mode-text">ADHD-Friendly Mode Active</span>
+      <span class="mode-timer" id="lesson-timer">2:00</span>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="micro-progress">
+      <div class="progress-steps">
+        <div class="step completed" data-step="1">
+          <div class="step-number">1</div>
+          <div class="step-label">Intro</div>
+        </div>
+        <div class="step active" data-step="2">
+          <div class="step-number">2</div>
+          <div class="step-label">Learn</div>
+        </div>
+        <div class="step" data-step="3">
+          <div class="step-number">3</div>
+          <div class="step-label">Practice</div>
+        </div>
+        <div class="step" data-step="4">
+          <div class="step-number">4</div>
+          <div class="step-label">Done!</div>
+        </div>
+      </div>
+      <div class="progress-bar-micro">
+        <div class="progress-fill-micro" id="progress-fill" style="width:25%"></div>
+      </div>
+    </div>
+
+    <!-- Lesson Content -->
+    <div class="lesson-content" id="lesson-content">
+      <div class="lesson-step" id="step-1" style="display:none;">
+        <div class="step-icon">👋</div>
+        <h2 class="step-title">Welcome!</h2>
+        <p class="step-text">This is a quick 2-minute lesson. Let's learn something new together!</p>
+        <div class="focus-tip">
+          <span class="tip-icon">💡</span>
+          <span class="tip-text">Tip: Take deep breaths and focus on one step at a time</span>
+        </div>
+      </div>
+
+      <div class="lesson-step active" id="step-2">
+        <div class="step-icon">🔢</div>
+        <h2 class="step-title">Quick Math: Adding Numbers</h2>
+        <p class="step-text">Let's practice adding small numbers. Focus on this one example:</p>
+        
+        <div class="example-card">
+          <div class="example-question">5 + 3 = ?</div>
+          <div class="example-hint">
+            <span class="hint-icon">💭</span>
+            Count with me: 5... 6, 7, 8!
+          </div>
+          <div class="example-answer">Answer: 8</div>
+        </div>
+
+        <div class="visual-aid">
+          <div class="counting-dots">
+            <span class="dot filled">●</span>
+            <span class="dot filled">●</span>
+            <span class="dot filled">●</span>
+            <span class="dot filled">●</span>
+            <span class="dot filled">●</span>
+            <span class="dot-space">+</span>
+            <span class="dot filled">●</span>
+            <span class="dot filled">●</span>
+            <span class="dot filled">●</span>
+          </div>
+        </div>
+
+        <!-- Voice Support Button -->
+        <button class="voice-btn" id="read-aloud-btn">
+          <span class="voice-icon">🔊</span>
+          <span class="voice-text">Read Aloud</span>
+        </button>
+      </div>
+
+      <div class="lesson-step" id="step-3" style="display:none;">
+        <div class="step-icon">✏️</div>
+        <h2 class="step-title">Your Turn!</h2>
+        <p class="step-text">Try this one yourself:</p>
+        
+        <div class="practice-question">
+          <div class="question-text">4 + 2 = ?</div>
+          <div class="answer-options">
+            <button class="option-btn" data-answer="5">5</button>
+            <button class="option-btn" data-answer="6">6</button>
+            <button class="option-btn" data-answer="7">7</button>
+          </div>
+        </div>
+
+        <div class="encouragement" id="encouragement" style="display:none;">
+          <span class="encourage-icon">🎉</span>
+          <span class="encourage-text">Great job! You got it!</span>
+        </div>
+      </div>
+
+      <div class="lesson-step" id="step-4" style="display:none;">
+        <div class="step-icon">🎉</div>
+        <h2 class="step-title">You Did It!</h2>
+        <p class="step-text">Amazing work! You completed this micro-lesson in 2 minutes!</p>
+        
+        <div class="completion-stats">
+          <div class="stat-item">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value">+10</div>
+            <div class="stat-label">Points</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value">+1</div>
+            <div class="stat-label">Streak</div>
+          </div>
+        </div>
+
+        <div class="next-actions">
+          <a href="{% url 'break_timer' %}?duration=2" class="action-btn btn-break">
+            <span class="btn-icon">🌿</span>
+            <span class="btn-text">Take 2-Min Break</span>
+          </a>
+          <button class="action-btn btn-next" onclick="location.reload()">
+            <span class="btn-icon">→</span>
+            <span class="btn-text">Next Lesson</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="lesson-nav">
+      <button class="nav-btn btn-back" id="back-btn" disabled>
+        <span>←</span> Back
+      </button>
+      <button class="nav-btn btn-next" id="next-btn">
+        Next <span>→</span>
+      </button>
+    </div>
+
+    <!-- Focus Mode Controls -->
+    <div class="focus-controls">
+      <button class="focus-toggle" id="distraction-free-toggle">
+        <span class="toggle-icon">👁️</span>
+        <span class="toggle-text">Distraction-Free Mode</span>
+      </button>
+    </div>
+  </div>
+
+  <script src="{% static 'app.js' %}"></script>
+  <script src="{% static 'micro-lesson.js' %}"></script>
+</body>
+</html>

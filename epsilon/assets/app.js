@@ -60,10 +60,6 @@
     else body.className = 'theme-peach';
   }
 
-  // REMOVED: Landing role buttons navigation - Now handled by Django URL tags
-
-  // Signup page wiring - REMOVED: Now handled by Django form submission
-
   // Quiz data
   const questions = [
     { text: 'I find it easier to learn with pictures and videos' },
@@ -84,7 +80,7 @@
   const btnNext = document.getElementById('btn-next');
 
   function startQuiz(){
-    if(!screens.quiz) return; // Not on a page with quiz
+    if(!screens.quiz) return;
     qIndex = 0;
     showScreen('quiz');
     renderQuestion();
@@ -94,11 +90,11 @@
     const total = questions.length;
     const num = qIndex + 1;
     const pct = Math.round(((qIndex) / total) * 100);
-  if(progressBar) progressBar.style.width = `${pct}%`;
-  if(progressLabel) progressLabel.textContent = `Question ${num} of ${total}`;
+    if(progressBar) progressBar.style.width = `${pct}%`;
+    if(progressLabel) progressLabel.textContent = `Question ${num} of ${total}`;
 
-  if(qText) qText.textContent = questions[qIndex].text;
-  if(optionsEl) optionsEl.innerHTML = '';
+    if(qText) qText.textContent = questions[qIndex].text;
+    if(optionsEl) optionsEl.innerHTML = '';
 
     choices.forEach((label, i) => {
       const id = `opt-${qIndex}-${i}`;
@@ -113,7 +109,6 @@
 
       opt.addEventListener('click', () => selectOption(i));
       opt.addEventListener('keydown', (ev)=>{
-        // keyboard support for arrow keys
         if(ev.key === 'ArrowRight' || ev.key === 'ArrowDown'){ ev.preventDefault(); selectOption(Math.min(i+1, choices.length-1)); }
         if(ev.key === 'ArrowLeft' || ev.key === 'ArrowUp'){ ev.preventDefault(); selectOption(Math.max(i-1, 0)); }
         if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); selectOption(i); }
@@ -122,7 +117,6 @@
       optionsEl && optionsEl.appendChild(opt);
     });
 
-    // restore previous selection if exists
     if(answers[qIndex] != null){
       selectOption(answers[qIndex], false);
     } else {
@@ -166,12 +160,10 @@
   }
 
   function finish(){
-    // Save answers to hidden field and submit form
     const quizAnswersField = document.getElementById('quiz-answers');
     const quizForm = document.getElementById('quiz-form');
     
     if (quizAnswersField && quizForm) {
-      // Create a data structure with questions and answers
       const quizData = questions.map((q, idx) => ({
         question: q.text,
         answer: choices[answers[idx]]
@@ -182,54 +174,132 @@
     }
   }
 
-  // Auto-start quiz if on the quiz/path page
   if (screens.quiz && screens.quiz.classList.contains('active')) {
     startQuiz();
   }
-  
-  // REMOVED: Results page handlers - Now using Django URL tags in templates
-  
-  // REMOVED: Profile Setup handlers - Now using Django forms
-  
-  // REMOVED: Profile close button - Now using Django URL tags
 
-  // Chat Page Functionality with WebSocket
+  // ============================================
+  // TEXT-TO-SPEECH SETUP (Before addMessage)
+  // ============================================
+  let readAloudEnabled = localStorage.getItem('readAloudEnabled') === 'true';
+  let speechSynthesis = window.speechSynthesis;
+  let currentUtterance = null;
+
+  function updateReadAloudButton() {
+    const readAloudBtn = document.getElementById('read-aloud-btn');
+    if (readAloudBtn) {
+      readAloudBtn.textContent = readAloudEnabled ? '🔊' : '🔇';
+      readAloudBtn.title = readAloudEnabled ? 'Read aloud is ON' : 'Read aloud is OFF';
+      readAloudBtn.classList.toggle('active', readAloudEnabled);
+    }
+  }
+
+  function speakText(text) {
+    if (!readAloudEnabled) return;
+    
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    }
+    
+    let cleanText = text
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/`(.*?)`/g, '$1')
+      .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+      .replace(/\n+/g, '. ')
+      .replace(/#+\s/g, '')
+      .trim();
+    
+    if (!cleanText) return;
+    
+    currentUtterance = new SpeechSynthesisUtterance(cleanText);
+    currentUtterance.rate = 0.9;
+    currentUtterance.pitch = 1.1;
+    currentUtterance.volume = 1.0;
+    
+    const voices = speechSynthesis.getVoices();
+    const preferredVoice = voices.find(voice => 
+      voice.name.includes('Female') || 
+      voice.name.includes('Google UK English Female') ||
+      voice.name.includes('Microsoft Zira')
+    );
+    
+    if (preferredVoice) {
+      currentUtterance.voice = preferredVoice;
+    }
+    
+    currentUtterance.onstart = function() {
+      const readAloudBtn = document.getElementById('read-aloud-btn');
+      if (readAloudBtn) readAloudBtn.classList.add('speaking');
+    };
+    
+    currentUtterance.onend = function() {
+      const readAloudBtn = document.getElementById('read-aloud-btn');
+      if (readAloudBtn) readAloudBtn.classList.remove('speaking');
+    };
+    
+    currentUtterance.onerror = function(event) {
+      console.error('Speech synthesis error:', event);
+      const readAloudBtn = document.getElementById('read-aloud-btn');
+      if (readAloudBtn) readAloudBtn.classList.remove('speaking');
+    };
+    
+    speechSynthesis.speak(currentUtterance);
+  }
+
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = function() {
+      speechSynthesis.getVoices();
+    };
+  }
+
+  // Set up read aloud button
+  if (document.getElementById('read-aloud-btn')) {
+    const readAloudBtn = document.getElementById('read-aloud-btn');
+    updateReadAloudButton();
+    
+    readAloudBtn.addEventListener('click', function() {
+      readAloudEnabled = !readAloudEnabled;
+      localStorage.setItem('readAloudEnabled', readAloudEnabled);
+      updateReadAloudButton();
+      
+      if (!readAloudEnabled && speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+      }
+    });
+  }
+
+  // ============================================
+  // CHAT FUNCTIONALITY
+  // ============================================
   const messageInput = document.getElementById('message-input');
   const sendBtn = document.getElementById('send-btn');
   const chatMessages = document.getElementById('chat-messages');
   const quickIdeaBtns = document.querySelectorAll('.quick-idea-btn');
   const muteBtn = document.getElementById('mute-btn');
   
-  // Sound control
   let isSoundEnabled = true;
   
-  // Mute button functionality
   if (muteBtn) {
     muteBtn.addEventListener('click', () => {
       isSoundEnabled = !isSoundEnabled;
-      muteBtn.textContent = isSoundEnabled ? '🔊' : '🔇';
+      muteBtn.textContent = isSoundEnabled ? '🔔' : '🔇';
       muteBtn.setAttribute('aria-label', isSoundEnabled ? 'Mute sound' : 'Unmute sound');
-      
-      // Save preference to localStorage
       localStorage.setItem('tegaSoundEnabled', isSoundEnabled);
     });
     
-    // Load saved preference
     const savedPreference = localStorage.getItem('tegaSoundEnabled');
     if (savedPreference !== null) {
       isSoundEnabled = savedPreference === 'true';
-      muteBtn.textContent = isSoundEnabled ? '🔊' : '🔇';
-      muteBtn.setAttribute('aria-label', isSoundEnabled ? 'Mute sound' : 'Unmute sound');
+      muteBtn.textContent = isSoundEnabled ? '🔔' : '🔇';
     }
   }
   
-  // WebSocket connection
   let chatSocket = null;
   let reconnectAttempts = 0;
   let reconnectInterval = null;
   let isIntentionallyClosed = false;
   
-  // Initialize WebSocket connection if on chat page
   if (chatMessages) {
     connectWebSocket();
   }
@@ -238,20 +308,16 @@
     if (isIntentionallyClosed) return;
     
     try {
-      // Use local WebSocket that bridges to external AI
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/ws/chat/`;
       chatSocket = new WebSocket(wsUrl);
       
       chatSocket.onopen = function(e) {
         console.log('WebSocket connection established');
-        console.log('Connected to:', wsUrl);
         reconnectAttempts = 0;
-        // Update connection status
         const statusEl = document.querySelector('.chat-status');
         if (statusEl) statusEl.textContent = '● Online';
         
-        // Clear any reconnect interval
         if (reconnectInterval) {
           clearInterval(reconnectInterval);
           reconnectInterval = null;
@@ -261,13 +327,10 @@
       chatSocket.onmessage = function(e) {
         try {
           const data = JSON.parse(e.data);
-          // Display Tega's response with markdown support
           const message = data.message || data.response || data.text || e.data;
-          const format = data.format || 'text';
-          addMessage(message, false, format);
+          addMessage(message, false);
         } catch (error) {
-          // If not JSON, treat as plain text
-          addMessage(e.data, false, 'text');
+          addMessage(e.data, false);
         }
       };
       
@@ -278,15 +341,13 @@
       };
       
       chatSocket.onclose = function(e) {
-        console.log('WebSocket connection closed', e.code, e.reason);
+        console.log('WebSocket connection closed');
         const statusEl = document.querySelector('.chat-status');
         if (statusEl) statusEl.textContent = '● Reconnecting...';
         
-        // Always try to reconnect unless intentionally closed
         if (!isIntentionallyClosed) {
           reconnectAttempts++;
-          const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // Exponential backoff, max 30s
-          console.log(`Reconnecting in ${delay/1000}s (attempt ${reconnectAttempts})...`);
+          const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
           
           reconnectInterval = setTimeout(() => {
             connectWebSocket();
@@ -295,29 +356,21 @@
       };
     } catch (error) {
       console.error('Failed to create WebSocket connection:', error);
-      const statusEl = document.querySelector('.chat-status');
-      if (statusEl) statusEl.textContent = '● Offline';
-      
-      // Retry connection
       if (!isIntentionallyClosed) {
         setTimeout(connectWebSocket, 5000);
       }
     }
   }
   
-  // Keep connection alive with heartbeat
   setInterval(() => {
     if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
       chatSocket.send(JSON.stringify({ type: 'ping' }));
     }
-  }, 60000); // Send ping every 60 seconds (1 minute)
+  }, 60000);
   
-  // Audio notification for new messages
   function playMessageSound() {
-    // Don't play sound if muted
     if (!isSoundEnabled) return;
     
-    // Create a pleasant notification sound (2 seconds)
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -325,20 +378,18 @@
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
     
-    oscillator.frequency.value = 1000; // Frequency in Hz
+    oscillator.frequency.value = 1000;
     oscillator.type = 'sine';
     
-    // Create a gentle fade in and fade out over 2 seconds
     gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1); // Fade in
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + 1.5); // Hold
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2); // Fade out
+    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + 1.5);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2);
     
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 1.5);
   }
   
-  // Close connection gracefully when leaving page
   window.addEventListener('beforeunload', () => {
     isIntentionallyClosed = true;
     if (chatSocket) {
@@ -346,7 +397,22 @@
     }
   });
 
-  function addMessage(text, isUser = false, format = 'text') {
+  // Simple markdown parser
+  function parseMarkdown(text) {
+    let html = text
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/__([^_]+)__/g, '<strong>$1</strong>')
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+      .replace(/_([^_]+)_/g, '<em>$1</em>')
+      .replace(/\n/g, '<br>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    
+    return html;
+  }
+
+  // UNIFIED addMessage function with text-to-speech support
+  function addMessage(text, isUser = false) {
     if (!chatMessages) return;
     
     const messageDiv = document.createElement('div');
@@ -355,27 +421,18 @@
     const avatarDiv = document.createElement('div');
     avatarDiv.className = `message-avatar ${isUser ? 'user-avatar' : ''}`;
     
-    // Create avatar content (image for Tega, emoji for user)
     if (isUser) {
       avatarDiv.textContent = '👤';
     } else {
       const img = document.createElement('img');
       img.src = document.querySelector('.logo-icon img')?.src || '/static/icons/Logo.svg';
       avatarDiv.appendChild(img);
-      
-      // Play sound for Tega's messages only
       playMessageSound();
     }
     
     const bubbleDiv = document.createElement('div');
     bubbleDiv.className = 'message-bubble';
-    
-    // Handle markdown formatting
-    if (format === 'markdown') {
-      bubbleDiv.innerHTML = parseMarkdown(text);
-    } else {
-      bubbleDiv.textContent = text;
-    }
+    bubbleDiv.innerHTML = parseMarkdown(text);
     
     if (isUser) {
       messageDiv.appendChild(bubbleDiv);
@@ -383,71 +440,57 @@
     } else {
       messageDiv.appendChild(avatarDiv);
       messageDiv.appendChild(bubbleDiv);
+      
+      // Add read aloud button for Tega messages
+      const readBtn = document.createElement('button');
+      readBtn.className = 'message-read-btn';
+      readBtn.innerHTML = '🔊';
+      readBtn.title = 'Read this message';
+      readBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        speakText(text);
+      });
+      messageDiv.appendChild(readBtn);
+      
+      // Auto-read if enabled
+      if (readAloudEnabled) {
+        setTimeout(() => speakText(text), 500);
+      }
     }
     
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
-  
-  // Simple markdown parser
-  function parseMarkdown(text) {
-    // Convert markdown to HTML
-    let html = text
-      // Bold: **text** or __text__
-      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-      .replace(/__([^_]+)__/g, '<strong>$1</strong>')
-      // Italic: *text* or _text_
-      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-      .replace(/_([^_]+)_/g, '<em>$1</em>')
-      // Line breaks: \n
-      .replace(/\n/g, '<br>')
-      // Code: `code`
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
-      // Links: [text](url)
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-    
-    return html;
-  }
 
   function sendMessage() {
-    // Check if there's a file attached
     const fileInput = document.getElementById('file-input');
     const attachedFile = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : null;
-    
-    // Get message text (can be empty if file is attached)
     const userMessage = messageInput ? messageInput.value.trim() : '';
     
-    // Don't send if both message and file are empty
     if (!userMessage && !attachedFile) return;
     
-    // Display user message in chat if there's text
     if (userMessage) {
       addMessage(userMessage, true);
     }
     
-    // Display file indicator in chat if there's a file
     if (attachedFile) {
       addMessage(`📎 ${attachedFile.name}`, true);
     }
     
-    // Clear input
     if (messageInput) {
       messageInput.value = '';
     }
     
     if (attachedFile) {
-      // Show loading message
       addMessage('Processing file...', false);
       
-      // Convert file to base64 and send
       const reader = new FileReader();
       reader.onload = function(e) {
-        const base64Content = e.target.result.split(',')[1]; // Remove data:...;base64, prefix
+        const base64Content = e.target.result.split(',')[1];
         
-        // Create a meaningful message for the AI
         let messageForAI = userMessage;
         if (!messageForAI) {
-          // Default message if user didn't provide one
           if (attachedFile.type === 'application/pdf') {
             messageForAI = 'Please read and analyze this PDF document. Help me understand its content.';
           } else if (attachedFile.type === 'text/plain') {
@@ -457,7 +500,6 @@
           }
         }
         
-        // Send message with file via WebSocket
         if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
           const messageData = {
             message: messageForAI,
@@ -471,29 +513,11 @@
           };
           
           chatSocket.send(JSON.stringify(messageData));
-          
-          console.log('=== FILE UPLOAD DEBUG ===');
-          console.log('File sent via WebSocket:', attachedFile.name);
-          console.log('File type:', attachedFile.type);
-          console.log('Message sent:', messageForAI);
-          console.log('File size (base64):', base64Content.length, 'characters');
-          console.log('File size (original):', attachedFile.size, 'bytes');
-          console.log('Full message structure:', {
-            message: messageForAI,
-            type: 'chat',
-            unique_id: window.uniqueId || null,
-            file: {
-              name: attachedFile.name,
-              type: attachedFile.type,
-              contentLength: base64Content.length
-            }
-          });
-          console.log('=== END DEBUG ===');
+          console.log('File sent:', attachedFile.name);
         } else {
           addMessage('Sorry, connection lost. Please refresh the page.', false);
         }
         
-        // Clear file input and hide preview
         fileInput.value = '';
         const filePreview = document.getElementById('file-preview');
         if (filePreview) filePreview.style.display = 'none';
@@ -501,14 +525,12 @@
       reader.onerror = function(error) {
         console.error('Error reading file:', error);
         addMessage('Sorry, there was an error reading the file.', false);
-        // Clear file input and hide preview
         fileInput.value = '';
         const filePreview = document.getElementById('file-preview');
         if (filePreview) filePreview.style.display = 'none';
       };
       reader.readAsDataURL(attachedFile);
     } else {
-      // Send message without file via WebSocket
       if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
         const messageData = JSON.stringify({
           message: userMessage,
@@ -517,7 +539,6 @@
         });
         chatSocket.send(messageData);
       } else {
-        // Fallback if WebSocket not connected
         addMessage('Sorry, connection lost. Please refresh the page.', false);
       }
     }
@@ -550,7 +571,6 @@
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
-        // Validate file type
         const validTypes = ['application/pdf', 'text/plain'];
         if (!validTypes.includes(file.type)) {
           alert('Please upload only PDF or TXT files.');
@@ -558,15 +578,13 @@
           return;
         }
 
-        // Validate file size (max 10MB)
-        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+        const maxSize = 10 * 1024 * 1024;
         if (file.size > maxSize) {
           alert('File size must be less than 10MB.');
           fileInput.value = '';
           return;
         }
 
-        // Show file preview
         if (fileName) {
           fileName.textContent = file.name;
         }
@@ -584,7 +602,6 @@
     });
   }
 
-  // Quick idea buttons
   quickIdeaBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const idea = btn.textContent;
@@ -595,22 +612,13 @@
     });
   });
 
-  // ============================================
-  // Persona detection for onboarding form
-  // ============================================
+  // Persona detection
   const personaForm = document.getElementById('personaForm');
   if (personaForm) {
-    // Minimal persona profiles for client storage (optional extension)
     const PERSONAS = {
-      chidi: {
-        name: 'Chidi', type: 'ADHD-Optimized', icon: '⚡'
-      },
-      ngozi: {
-        name: 'Ngozi', type: 'Audio-First Learning', icon: '🔊'
-      },
-      tunde: {
-        name: 'Tunde', type: 'Self-Paced Mastery', icon: '🐢'
-      }
+      chidi: { name: 'Chidi', type: 'ADHD-Optimized', icon: '⚡' },
+      ngozi: { name: 'Ngozi', type: 'Audio-First Learning', icon: '🔊' },
+      tunde: { name: 'Tunde', type: 'Self-Paced Mastery', icon: '🐢' }
     };
 
     function detectPersona(answers){
@@ -644,7 +652,6 @@
     }
 
     personaForm.addEventListener('submit', function(e){
-      // Collect answers and detect persona, then let form submit to server
       try {
         const fd = new FormData(personaForm);
         const answers = {
@@ -655,7 +662,6 @@
         };
         const persona = detectPersona(answers);
 
-        // Save lightweight profile to storage (optional for client use)
         const profile = {
           persona,
           personaData: PERSONAS[persona] || null,
@@ -665,16 +671,8 @@
         try { localStorage.setItem('tegaLearningProfile', JSON.stringify(profile)); } catch(_){}
         try { sessionStorage.setItem('currentPersona', persona); } catch(_){}
 
-        // Populate hidden field so server can store persona in session
         const hiddenPersona = document.getElementById('persona-field');
         if (hiddenPersona) hiddenPersona.value = persona;
-
-        // Optionally show a brief loading state before submit
-        const loading = document.getElementById('loadingState');
-        if (loading) {
-          // Show loading spinner briefly but do NOT block submission long
-          // We don't preventDefault; submission continues normally
-        }
       } catch (err) {
         console.warn('Persona detection skipped:', err);
       }

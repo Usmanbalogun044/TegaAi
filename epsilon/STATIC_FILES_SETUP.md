@@ -52,7 +52,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 ✅ `login.html` - Login form  
 ✅ `signup.html` - Registration form  
 ✅ `profile-setup.html` - Profile setup  
-✅ `path.html` - Learning path quiz  
+✅ `path1.html` - Learning path quiz  
 ✅ `results.html` - Results page  
 ✅ `dashboard.html` - Student dashboard  
 ✅ `dashboard-adult.html` - Adult dashboard  

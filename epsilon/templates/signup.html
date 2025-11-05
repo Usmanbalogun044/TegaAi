@@ -26,6 +26,8 @@
 
           <form id="signup-form" method="post" action="{% url 'signup' %}" novalidate>
             {% csrf_token %}
+              <input type="hidden" name="role" id="role-field" value="{{ role|default:'' }}">
+              <input type="hidden" name="next" id="next-field" value="{{ next|default:'' }}">
             <label class="field">
               <span class="label">Username  </span>
               <input type="text" id="name" name="name" value="{{ name|default:'' }}" autocomplete="name" placeholder="What should we call you?" required />
@@ -44,7 +46,7 @@
               <span class="error" id="password-error" role="alert"></span>
             </label>
 
-            <button type="submit" class="btn btn-primary btn-lg" id="continue-btn">Continue</button>
+            <button type="submit" class="btn btn-primary btn-lg" id="continue-btn">Signup</button>
           </form>
 
           <p class="auth-alt">Already have an account? <a href="{% url 'login' %}" id="link-signin">Sign in</a></p>
