@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DJANGO_SETTINGS_MODULE=epsilon.settings
 
 # Set work directory
-WORKDIR /app
+WORKDIR /epsilon
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -41,7 +41,7 @@ RUN useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app
 USER appuser
 
-# Expose port 8000
+
 EXPOSE 8080
 
 # Run migrations and start Daphne server for WebSocket support
