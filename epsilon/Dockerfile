@@ -42,7 +42,7 @@ RUN useradd -m -u 1000 appuser && \
 USER appuser
 
 # Expose port 8000
-EXPOSE 8000
+EXPOSE 8080
 
 # Run migrations and start Daphne server for WebSocket support
-CMD ["sh", "-c", "python manage.py migrate && daphne -b 0.0.0.0 -p 8000 epsilon.asgi:application"]
+CMD ["sh", "-c", "python manage.py migrate && daphne -b 0.0.0.0 -p 8080 epsilon.asgi:application"]
