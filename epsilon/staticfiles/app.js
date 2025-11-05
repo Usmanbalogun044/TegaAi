@@ -238,11 +238,14 @@
     if (isIntentionallyClosed) return;
     
     try {
-      // Try secure WebSocket first
-      chatSocket = new WebSocket('wss://epsilonmivaaiengine.onrender.com/ws/chat');
+      // Use local WebSocket that bridges to external AI
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/ws/chat/`;
+      chatSocket = new WebSocket(wsUrl);
       
       chatSocket.onopen = function(e) {
         console.log('WebSocket connection established');
+        console.log('Connected to:', wsUrl);
         reconnectAttempts = 0;
         // Update connection status
         const statusEl = document.querySelector('.chat-status');
@@ -407,23 +410,116 @@
   }
 
   function sendMessage() {
-    if (!messageInput || !messageInput.value.trim()) return;
+    // Check if there's a file attached
+    const fileInput = document.getElementById('file-input');
+    const attachedFile = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : null;
     
-    const userMessage = messageInput.value.trim();
-    addMessage(userMessage, true);
-    messageInput.value = '';
+    // Get message text (can be empty if file is attached)
+    const userMessage = messageInput ? messageInput.value.trim() : '';
     
-    // Send message via WebSocket
-    if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
-      const messageData = JSON.stringify({
-        message: userMessage,
-        type: 'chat',
-        unique_id: window.uniqueId || null
-      });
-      chatSocket.send(messageData);
+    // Don't send if both message and file are empty
+    if (!userMessage && !attachedFile) return;
+    
+    // Display user message in chat if there's text
+    if (userMessage) {
+      addMessage(userMessage, true);
+    }
+    
+    // Display file indicator in chat if there's a file
+    if (attachedFile) {
+      addMessage(`📎 ${attachedFile.name}`, true);
+    }
+    
+    // Clear input
+    if (messageInput) {
+      messageInput.value = '';
+    }
+    
+    if (attachedFile) {
+      // Show loading message
+      addMessage('Processing file...', false);
+      
+      // Convert file to base64 and send
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Content = e.target.result.split(',')[1]; // Remove data:...;base64, prefix
+        
+        // Create a meaningful message for the AI
+        let messageForAI = userMessage;
+        if (!messageForAI) {
+          // Default message if user didn't provide one
+          if (attachedFile.type === 'application/pdf') {
+            messageForAI = 'Please read and analyze this PDF document. Help me understand its content.';
+          } else if (attachedFile.type === 'text/plain') {
+            messageForAI = 'Please read and analyze this text file. Help me understand its content.';
+          } else {
+            messageForAI = `Please analyze this file: ${attachedFile.name}`;
+          }
+        }
+        
+        // Send message with file via WebSocket
+        if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+          const messageData = {
+            message: messageForAI,
+            type: 'chat',
+            unique_id: window.uniqueId || null,
+            file: {
+              name: attachedFile.name,
+              type: attachedFile.type,
+              content: base64Content
+            }
+          };
+          
+          chatSocket.send(JSON.stringify(messageData));
+          
+          console.log('=== FILE UPLOAD DEBUG ===');
+          console.log('File sent via WebSocket:', attachedFile.name);
+          console.log('File type:', attachedFile.type);
+          console.log('Message sent:', messageForAI);
+          console.log('File size (base64):', base64Content.length, 'characters');
+          console.log('File size (original):', attachedFile.size, 'bytes');
+          console.log('Full message structure:', {
+            message: messageForAI,
+            type: 'chat',
+            unique_id: window.uniqueId || null,
+            file: {
+              name: attachedFile.name,
+              type: attachedFile.type,
+              contentLength: base64Content.length
+            }
+          });
+          console.log('=== END DEBUG ===');
+        } else {
+          addMessage('Sorry, connection lost. Please refresh the page.', false);
+        }
+        
+        // Clear file input and hide preview
+        fileInput.value = '';
+        const filePreview = document.getElementById('file-preview');
+        if (filePreview) filePreview.style.display = 'none';
+      };
+      reader.onerror = function(error) {
+        console.error('Error reading file:', error);
+        addMessage('Sorry, there was an error reading the file.', false);
+        // Clear file input and hide preview
+        fileInput.value = '';
+        const filePreview = document.getElementById('file-preview');
+        if (filePreview) filePreview.style.display = 'none';
+      };
+      reader.readAsDataURL(attachedFile);
     } else {
-      // Fallback if WebSocket not connected
-      addMessage('Sorry, connection lost. Please refresh the page.', false);
+      // Send message without file via WebSocket
+      if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+        const messageData = JSON.stringify({
+          message: userMessage,
+          type: 'chat',
+          unique_id: window.uniqueId || null
+        });
+        chatSocket.send(messageData);
+      } else {
+        // Fallback if WebSocket not connected
+        addMessage('Sorry, connection lost. Please refresh the page.', false);
+      }
     }
   }
 
@@ -436,6 +532,55 @@
       if (e.key === 'Enter') {
         sendMessage();
       }
+    });
+  }
+
+  // File upload handling
+  const fileUploadBtn = document.getElementById('file-upload-btn');
+  const fileInput = document.getElementById('file-input');
+  const filePreview = document.getElementById('file-preview');
+  const fileName = document.getElementById('file-name');
+  const fileRemoveBtn = document.getElementById('file-remove-btn');
+
+  if (fileUploadBtn && fileInput) {
+    fileUploadBtn.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        // Validate file type
+        const validTypes = ['application/pdf', 'text/plain'];
+        if (!validTypes.includes(file.type)) {
+          alert('Please upload only PDF or TXT files.');
+          fileInput.value = '';
+          return;
+        }
+
+        // Validate file size (max 10MB)
+        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+        if (file.size > maxSize) {
+          alert('File size must be less than 10MB.');
+          fileInput.value = '';
+          return;
+        }
+
+        // Show file preview
+        if (fileName) {
+          fileName.textContent = file.name;
+        }
+        if (filePreview) {
+          filePreview.style.display = 'flex';
+        }
+      }
+    });
+  }
+
+  if (fileRemoveBtn && fileInput && filePreview) {
+    fileRemoveBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      filePreview.style.display = 'none';
     });
   }
 
