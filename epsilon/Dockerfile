@@ -28,9 +28,13 @@ COPY . .
 RUN mkdir -p staticfiles
 
 # Collect static files (may fail if static files not fully configured, which is OK)
+# Collect static files (may fail if static files not fully configured, which is OK)
 RUN python manage.py collectstatic --noinput || true
-RUN python manage.py makemigration
-RUn python manage.py migrate
+
+# Make and apply migrations
+RUN python manage.py makemigrations
+RUN python manage.py migrate
+
 
 # Create a non-root user to run the application
 RUN useradd -m -u 1000 appuser && \
