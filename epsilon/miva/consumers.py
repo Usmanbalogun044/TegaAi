@@ -29,6 +29,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
         self.ai_ws = None
         self.ai_session = None
+        self.listener_task = None
         
         # Connect to external AI engine
         try:
@@ -37,15 +38,33 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'wss://epsilonmivaaiengine.onrender.com/ws/chat'
             )
             print("Connected to AI engine WebSocket")
+            
+            # Start listening for AI responses in background
+            self.listener_task = asyncio.create_task(self.listen_to_ai())
         except Exception as e:
             print(f"Failed to connect to AI engine: {e}")
     
     async def disconnect(self, close_code):
         """Clean up on disconnect"""
+        # Cancel listener task
+        if self.listener_task:
+            self.listener_task.cancel()
+            try:
+                await self.listener_task
+            except asyncio.CancelledError:
+                pass
+        
+        # Close WebSocket and session
         if self.ai_ws:
-            await self.ai_ws.close()
+            try:
+                await self.ai_ws.close()
+            except:
+                pass
         if self.ai_session:
-            await self.ai_session.close()
+            try:
+                await self.ai_session.close()
+            except:
+                pass
     
     async def receive(self, text_data):
         """
@@ -58,23 +77,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
             unique_id = data.get('unique_id', None)
             file_data = data.get('file', None)
             
+            # Validate message
+            if not message and not file_data:
+                print("No message or file provided")
+                return
+            
             # Process file if present
             if file_data:
+                print(f"Processing file: {file_data.get('name', 'unknown')}")
                 processed_message = await self.process_file(file_data, message)
                 
                 # Send processed message to AI engine
                 if self.ai_ws:
-                    await self.ai_ws.send_json({
-                        'message': processed_message,
-                        'type': 'chat',
-                        'unique_id': unique_id
-                    })
-                    
-                    # Wait for AI response
-                    response = await self.ai_ws.receive_json()
-                    
-                    # Forward AI response to client
-                    await self.send(text_data=json.dumps(response))
+                    try:
+                        await self.ai_ws.send_json({
+                            'message': processed_message,
+                            'type': 'chat',
+                            'unique_id': unique_id
+                        })
+                        print("Forwarded message to AI engine")
+                    except Exception as e:
+                        print(f"Error sending to AI: {e}")
+                        await self.send(text_data=json.dumps({
+                            'error': 'Failed to send message to AI'
+                        }))
                 else:
                     await self.send(text_data=json.dumps({
                         'error': 'AI engine not connected'
@@ -82,23 +108,45 @@ class ChatConsumer(AsyncWebsocketConsumer):
             else:
                 # No file, just forward message to AI engine
                 if self.ai_ws:
-                    await self.ai_ws.send_json(data)
-                    
-                    # Wait for AI response
-                    response = await self.ai_ws.receive_json()
-                    
-                    # Forward AI response to client
-                    await self.send(text_data=json.dumps(response))
+                    try:
+                        await self.ai_ws.send_json(data)
+                        print("Forwarded text message to AI engine")
+                    except Exception as e:
+                        print(f"Error sending to AI: {e}")
+                        await self.send(text_data=json.dumps({
+                            'error': 'Failed to send message to AI'
+                        }))
                 else:
                     await self.send(text_data=json.dumps({
                         'error': 'AI engine not connected'
                     }))
                     
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")
         except Exception as e:
             print(f"Error in receive: {e}")
-            await self.send(text_data=json.dumps({
-                'error': f'Error processing message: {str(e)}'
-            }))
+    
+    async def listen_to_ai(self):
+        """
+        Listen for messages from AI engine and forward to client.
+        Runs in background task.
+        """
+        try:
+            async for msg in self.ai_ws:
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    # Forward AI response to client
+                    await self.send(text_data=msg.data)
+                elif msg.type == aiohttp.WSMsgType.ERROR:
+                    print(f'AI WebSocket error: {self.ai_ws.exception()}')
+                    break
+                elif msg.type == aiohttp.WSMsgType.CLOSED:
+                    print('AI WebSocket closed')
+                    break
+        except asyncio.CancelledError:
+            # Task was cancelled, clean exit
+            pass
+        except Exception as e:
+            print(f"Error in AI listener: {e}")
     
     async def process_file(self, file_data, user_message):
         """
