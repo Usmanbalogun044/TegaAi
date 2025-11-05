@@ -1,12 +1,12 @@
 # Use Python 3.11 slim image for smaller size
 FROM python:3.11-slim
 
-# Set environment variables
+# Environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DJANGO_SETTINGS_MODULE=epsilon.settings
 
-# Set work directory
+# Set working directory
 WORKDIR /epsilon
 
 # Install system dependencies
@@ -14,35 +14,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements files
+# Copy requirement files first for caching
 COPY requirements.txt requirements_websocket.txt ./
 
-# Install Python dependencies
-RUN pip install --no-cache-dir --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt && \
-    pip install --no-cache-dir --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements_websocket.txt
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir -r requirements_websocket.txt
 
-# Copy project files
+# Copy the entire Django project
 COPY . .
 
-# Create staticfiles directory
-RUN mkdir -p staticfiles
+# Collect static files
+RUN mkdir -p staticfiles && \
+    python manage.py collectstatic --noinput || true
 
-# Collect static files (may fail if static files not fully configured, which is OK)
-# Collect static files (may fail if static files not fully configured, which is OK)
-RUN python manage.py collectstatic --noinput || true
-
-# Make and apply migrations
-RUN python manage.py makemigrations
-RUN python manage.py migrate
-
-
-# Create a non-root user to run the application
+# Create a non-root user and give permission to project directory
 RUN useradd -m -u 1000 appuser && \
-    chown -R appuser:appuser /app
+    chown -R appuser:appuser /epsilon
 USER appuser
 
-
+# Expose the app port
 EXPOSE 8080
 
-# Run migrations and start Daphne server for WebSocket support
+# Run database migrations and start Daphne server
 CMD ["sh", "-c", "python manage.py migrate && daphne -b 0.0.0.0 -p 8080 epsilon.asgi:application"]
