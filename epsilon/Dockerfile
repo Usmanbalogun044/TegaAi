@@ -21,20 +21,23 @@ COPY requirements.txt requirements_websocket.txt ./
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir -r requirements_websocket.txt
 
-# Copy the entire Django project
+# Copy project files
 COPY . .
 
-# Collect static files
+# Collect static files (ignore errors if Django isn't fully ready yet)
 RUN mkdir -p staticfiles && \
     python manage.py collectstatic --noinput || true
 
-# Create a non-root user and give permission to project directory
-RUN useradd -m -u 1000 appuser && \
+# ✅ Ensure directory exists before chown
+RUN mkdir -p /epsilon && \
+    useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /epsilon
+
+# Switch to non-root user
 USER appuser
 
-# Expose the app port
+# Expose Railway default port
 EXPOSE 8080
 
-# Run database migrations and start Daphne server
+# Run migrations & start server using Daphne (async-ready)
 CMD ["sh", "-c", "python manage.py migrate && daphne -b 0.0.0.0 -p 8080 epsilon.asgi:application"]
