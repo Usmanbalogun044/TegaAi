@@ -7,7 +7,7 @@ import asyncio
 import aiohttp
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 
 try:
     import PyPDF2
